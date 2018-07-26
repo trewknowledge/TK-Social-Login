@@ -1,0 +1,216 @@
+# Copyright (C) 2018 vip-social-login
+# This file is distributed under the same license as the vip-social-login package.
+msgid ""
+msgstr ""
+"Project-Id-Version: vip-social-login\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Poedit-Basepath: ..\n"
+"X-Poedit-KeywordsList: __;_e;_ex:1,2c;_n:1,2;_n_noop:1,2;_nx:1,2,4c;_nx_noop:1,2,3c;_x:1,2c;esc_attr__;esc_attr_e;esc_attr_x:1,2c;esc_html__;esc_html_e;esc_html_x:1,2c\n"
+"X-Poedit-SearchPath-0: .\n"
+"X-Poedit-SearchPathExcluded-0: *.js\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: ../tk-social-login.php:54
+msgid "TK Social Login &rsaquo; Error"
+msgstr ""
+
+#: ../tk-social-login.php:64, ../tk-social-login.php:74
+msgstr ""
+
+#: ../tk-social-login.php:65
+msgid "Invalid PHP version"
+msgstr ""
+
+#: ../tk-social-login.php:75
+msgid "Invalid WordPress version"
+msgstr ""
+
+#: ../tk-social-login.php:85
+msgid "You appear to be running a development version of this plugin. You must run <code>composer install</code> from the plugin dev directory."
+msgstr ""
+
+#: ../tk-social-login.php:86
+msgid "Autoloader not found."
+msgstr ""
+
+#: ../lib/class-setup-admin.php:22
+msgid "Social Login"
+msgstr ""
+
+#: ../lib/class-setup-admin.php:51
+msgctxt "Admin loading indicator"
+msgid "Settings Updated"
+msgstr ""
+
+#. translators: 1. Link to VIP website 2.Closing </a> tag 3.
+#: ../views/settings/footer.php:9
+msgctxt "Admin Settings Page Footer"
+msgid "Trew Knowledge Social Login. Built with &#9829; by %1$sTrew Knowledge%2$s."
+msgstr ""
+
+#. translators: 1. Link to donation page 2.Closing </a> tag 3. Link to plugin review page
+#: ../views/settings/footer.php:18
+msgctxt "Admin Settings Page Footer"
+msgid "Support our development efforts! %1$sDonate%2$s or leave a %3$s5-star rating%2$s."
+msgstr ""
+
+#: ../views/settings/header.php:3
+msgid "VIP Social Login"
+msgstr ""
+
+#: ../views/settings/header.php:8
+msgctxt "Plugin Admin navigation tabs"
+msgid "Providers"
+msgstr ""
+
+#: ../views/settings/header.php:9
+msgctxt "Plugin Admin navigation tabs"
+msgid "Global Settings"
+msgstr ""
+
+#: ../views/settings/providers.php:1
+msgid "Providers"
+msgstr ""
+
+#: ../views/settings/providers.php:9
+msgctxt "Toggle On/Off Status"
+msgid "OFF"
+msgstr ""
+
+#: ../views/settings/providers.php:10
+msgctxt "Toggle On/Off Status"
+msgid "ON"
+msgstr ""
+
+#: ../views/settings/providers.php:22
+msgctxt "Admin updating indicator"
+msgid "Updating..."
+msgstr ""
+
+#: ../views/settings/providers/facebook/getting-started.php:1
+msgctxt "Admin(Facebook) - Getting started"
+msgid "To allow your visitors to log in with their Facebook account, first you must create a Facebook App. The following guide will help you through the Facebook App creation process. After you have created your Facebook App, head over to \"Settings\" and configure the given \"App ID\" and \"App secret\" according to your Facebook App."
+msgstr ""
+
+#: ../views/settings/providers/facebook/getting-started.php:3
+msgctxt "Admin(Facebook) - Getting started"
+msgid "Create Facebook App"
+msgstr ""
+
+#: ../views/settings/providers/facebook/getting-started.php:6
+msgctxt "Admin(Facebook) - Getting started"
+msgid "Navigate to %1$s"
+msgstr ""
+
+#: ../views/settings/providers/facebook/getting-started.php:7
+msgctxt "Admin(Facebook) - Getting started"
+msgid "Log in with your Facebook credentials if you are not logged in"
+msgstr ""
+
+#: ../views/settings/providers/facebook/getting-started.php:8
+msgctxt "Admin(Facebook) - Getting started"
+msgid "Click on the \"Add a New App\" button"
+msgstr ""
+
+#: ../views/settings/providers/facebook/getting-started.php:9
+msgctxt "Admin(Facebook) - Getting started"
+msgid "Fill \"Display Name\" and \"Contact Email\""
+msgstr ""
+
+#: ../views/settings/providers/facebook/getting-started.php:10
+msgctxt "Admin(Facebook) - Getting started"
+msgid "Click on blue \"Create App ID\" button"
+msgstr ""
+
+#: ../views/settings/providers/facebook/getting-started.php:11
+msgctxt "Admin(Facebook) - Getting started"
+msgid "Move your mouse over Facebook Login and click on the appearing \"Set Up\" button"
+msgstr ""
+
+#: ../views/settings/providers/facebook/getting-started.php:12
+msgctxt "Admin(Facebook) - Getting started"
+msgid "Choose Web"
+msgstr ""
+
+#: ../views/settings/providers/facebook/getting-started.php:13
+msgctxt "Admin(Facebook) - Getting started"
+msgid "Fill \"Site URL\" with the url of your homepage, probably: %1$s"
+msgstr ""
+
+#: ../views/settings/providers/facebook/getting-started.php:14
+msgctxt "Admin(Facebook) - Getting started"
+msgid "Click on \"Save\""
+msgstr ""
+
+#: ../views/settings/providers/facebook/getting-started.php:15
+msgctxt "Admin(Facebook) - Getting started"
+msgid "In the left sidebar, click on \"Facebook Login\""
+msgstr ""
+
+#: ../views/settings/providers/facebook/getting-started.php:16
+msgctxt "Admin(Facebook) - Getting started"
+msgid "Add the following URL to the \"Valid OAuth redirect URIs\" field: %1$s"
+msgstr ""
+
+#: ../views/settings/providers/facebook/getting-started.php:17
+msgctxt "Admin(Facebook) - Getting started"
+msgid "Click on \"Save Changes\""
+msgstr ""
+
+#: ../views/settings/providers/facebook/getting-started.php:18
+msgctxt "Admin(Facebook) - Getting started"
+msgid "In the top of the left sidebar, click on \"Settings\""
+msgstr ""
+
+#: ../views/settings/providers/facebook/getting-started.php:19
+msgctxt "Admin(Facebook) - Getting started"
+msgid "Here you can see your \"APP ID\" and you can see your \"App secret\" if you click on the \"Show\" button. These will be needed in plugin's settings."
+msgstr ""
+
+#: ../views/settings/providers/facebook/getting-started.php:20
+msgctxt "Admin(Facebook) - Getting started"
+msgid "Enter your domain name to the App Domains"
+msgstr ""
+
+#: ../views/settings/providers/facebook/getting-started.php:21
+msgctxt "Admin(Facebook) - Getting started"
+msgid "Fill up the \"Privacy Policy URL\". Provide a publicly available and easily accessible privacy policy that explains what data you are collecting and how you will use that data."
+msgstr ""
+
+#: ../views/settings/providers/facebook/getting-started.php:22
+msgctxt "Admin(Facebook) - Getting started"
+msgid "Save your changes."
+msgstr ""
+
+#: ../views/settings/providers/facebook/getting-started.php:23
+msgctxt "Admin(Facebook) - Getting started"
+msgid "Your application is currently private, which means that only you can log in with it. In the left sidebar choose \"App Review\" and make your App public"
+msgstr ""
+
+#: ../views/settings/providers/facebook/getting-started.php:26
+msgctxt "Admin(Facebook) - Getting started"
+msgid "I am done setting up my Facebook App"
+msgstr ""
+
+#: ../views/settings/providers/facebook/header.php:5, ../views/settings/providers/facebook/header.php:5
+msgctxt "Admin - provider tab navigation"
+msgid "Getting Started"
+msgstr ""
+
+#: ../views/settings/providers/facebook/header.php:6, ../views/settings/providers/facebook/header.php:6
+msgctxt "Admin - provider tab navigation"
+msgid "Settings"
+msgstr ""
+
+#: ../views/settings/providers/facebook/settings.php:8
+msgctxt "Admin(Facebook) - Settings"
+msgid "APP ID"
+msgstr ""
+
+#: ../views/settings/providers/facebook/settings.php:17
+msgctxt "Admin(Facebook) - Settings"
+msgid "APP Secret"
+msgstr ""

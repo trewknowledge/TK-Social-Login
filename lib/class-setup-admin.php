@@ -2,7 +2,7 @@
 
 namespace TK\Social_Login;
 
-use TK\Social_Login\Plugin_Settings_Page;
+use TK\Social_Login\Admin\Settings_Page;
 
 class Setup_Admin {
 	function __construct() {
@@ -11,17 +11,46 @@ class Setup_Admin {
 	}
 
 	protected function setup() {
+		error_log( $_GET['vip-social-login-provider'] );
 		// Register the main GDPR options page
-		add_action('admin_menu', array( $this, 'register_options_page' ) );
-		add_action('admin_init', array( $this->settings_page, 'init' ) );
+		add_action( 'admin_menu', array( $this, 'register_options_page' ) );
+		// add_action( 'admin_init', array( $this->settings_page, 'init' ) );
+		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue' ) );
 	}
 
 	public function register_options_page() {
-		$page_title = esc_html__( 'Social Login', 'tksl' );
+		$page_title = esc_html__( 'Social Login', 'vip-social-login' );
 		$capability = 'manage_options';
-		$slug       = 'tk-social-login';
+		$slug       = 'vip-social-login';
 		$function   = array( $this->settings_page, 'render_settings_page' );
 
 		add_options_page( $page_title, $page_title, $capability, $slug, $function );
+	}
+
+	public function enqueue() {
+		wp_enqueue_style(
+			VIP_SOCIAL_LOGIN_CONFIG['plugin']['slug'],
+			VIP_SOCIAL_LOGIN_CONFIG['plugin']['url'] . 'assets/css/admin.css',
+			array(),
+			VIP_SOCIAL_LOGIN_VERSION,
+			'all'
+		);
+		wp_enqueue_script(
+			VIP_SOCIAL_LOGIN_CONFIG['plugin']['slug'],
+			VIP_SOCIAL_LOGIN_CONFIG['plugin']['url'] . 'assets/js/admin.js',
+			array( 'jquery', 'wp-util', 'jquery-ui-sortable' ),
+			VIP_SOCIAL_LOGIN_VERSION,
+			true
+		);
+
+		wp_localize_script(
+			VIP_SOCIAL_LOGIN_CONFIG['plugin']['slug'],
+			'TK',
+			array(
+				'i18n' => array(
+					'settings_updated' => esc_html_x( 'Settings Updated', 'Admin loading indicator' , 'vip-social-login' ),
+				),
+			)
+		);
 	}
 }

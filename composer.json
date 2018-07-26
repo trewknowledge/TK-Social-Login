@@ -1,0 +1,8 @@
+{
+    "autoload": {
+        "classmap": ["lib/"]
+    },
+    "require": {
+        "facebook/graph-sdk": "^5.6"
+    }
+}

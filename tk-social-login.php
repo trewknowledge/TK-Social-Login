@@ -10,7 +10,7 @@
  *
  * @link              https://trewknowledge.com
  * @since             1.0.0
- * @package           TK_Social_Login
+ * @package           VIP_Social_Login
  *
  * @wordpress-plugin
  * Plugin Name:       TK Social Login
@@ -21,7 +21,7 @@
  * Author URI:        https://trewknowledge.com
  * License:           GPL-2.0+
  * License URI:       http://www.gnu.org/licenses/gpl-2.0.txt
- * Text Domain:       tksl
+ * Text Domain:       vip-social-login
  * Domain Path:       /languages
  */
 
@@ -35,22 +35,23 @@ if ( ! defined( 'WPINC' ) ) {
  * Start at version 1.0.0 and use SemVer - https://semver.org
  * Rename this for your plugin and update it as you release new versions.
  */
-define( 'TKSL_VERSION', '1.0.0' );
-define( 'TKSL_MIN_PHP_VERSION', '5.6' );
-define( 'TKSL_MIN_WP_VERSION', '4.3' );
-define( 'TK_SOCIAL_LOGIN_CONFIG', array(
+define( 'VIP_SOCIAL_LOGIN_VERSION', '1.0.0' );
+define( 'VIP_SOCIAL_LOGIN_MIN_PHP_VERSION', '5.6' );
+define( 'VIP_SOCIAL_LOGIN_MIN_WP_VERSION', '4.3' );
+define( 'VIP_SOCIAL_LOGIN_CONFIG', array(
 	'plugin' => array(
+		'slug'          => 'vip-social-login',
 		'url'           => plugin_dir_url( __FILE__ ),
 		'path'          => plugin_dir_path( __FILE__ ),
 		'template_path' => plugin_dir_path( __FILE__ ) . 'views/',
 	),
 	'help'   => array(
-			'url' => 'https://trewknowledge.com/tksl/',
+			'url' => 'https://trewknowledge.com/vip-social-login/',
 	),
 ));
 
-$tksl_error = function( $message, $subtitle = '', $title = '' ) {
-	$title = $title ?: esc_html__( 'TK Social Login &rsaquo; Error', 'tksl' );
+$vip_social_login_error = function( $message, $subtitle = '', $title = '' ) {
+	$title = $title ?: esc_html__( 'TK Social Login &rsaquo; Error', 'vip-social-login' );
 	$message = "<h1>{$title}<br><small>{$subtitle}</small></h1><p>{$message}</p>";
 	wp_die( $message, $title );
 };
@@ -58,31 +59,31 @@ $tksl_error = function( $message, $subtitle = '', $title = '' ) {
 /**
 * Ensure compatible version of PHP is used
 */
-if ( version_compare( phpversion(), TKSL_MIN_PHP_VERSION, '<' ) ) {
-	$tksl_error(
-			esc_html__( 'You must be using PHP ' . TKSL_MIN_PHP_VERSION . ' or greater.', 'tksl' ),
-			esc_html__( 'Invalid PHP version', 'tksl' )
+if ( version_compare( phpversion(), VIP_SOCIAL_LOGIN_MIN_PHP_VERSION, '<' ) ) {
+	$vip_social_login_error(
+			esc_html__( 'You must be using PHP ' . VIP_SOCIAL_LOGIN_MIN_PHP_VERSION . ' or greater.', 'vip-social-login' ),
+			esc_html__( 'Invalid PHP version', 'vip-social-login' )
 	);
 }
 
 /**
 * Ensure compatible version of WordPress is used
 */
-if ( version_compare( get_bloginfo('version'), TKSL_MIN_WP_VERSION, '<' ) ) {
-	$tksl_error(
-			esc_html__( 'You must be using WordPress ' . TKSL_MIN_WP_VERSION .  ' or greater.', 'tksl' ),
-			esc_html__( 'Invalid WordPress version', 'tksl' )
+if ( version_compare( get_bloginfo('version'), VIP_SOCIAL_LOGIN_MIN_WP_VERSION, '<' ) ) {
+	$vip_social_login_error(
+			esc_html__( 'You must be using WordPress ' . VIP_SOCIAL_LOGIN_MIN_WP_VERSION .  ' or greater.', 'vip-social-login' ),
+			esc_html__( 'Invalid WordPress version', 'vip-social-login' )
 	);
 }
 
 /**
  * Load dependencies
  */
-$autoload = __DIR__ . '/dev/vendor/autoload.php';
+$autoload = __DIR__ . '/vendor/autoload.php';
 if ( ! file_exists( $autoload ) ) {
-	$tksl_error(
-		esc_html__( 'You appear to be running a development version of this plugin. You must run <code>composer install</code> from the plugin dev directory.', 'tksl' ),
-		esc_html__( 'Autoloader not found.', 'tksl' )
+	$vip_social_login_error(
+		esc_html__( 'You appear to be running a development version of this plugin. You must run <code>composer install</code> from the plugin dev directory.', 'vip-social-login' ),
+		esc_html__( 'Autoloader not found.', 'vip-social-login' )
 	);
 }
 require_once $autoload;
