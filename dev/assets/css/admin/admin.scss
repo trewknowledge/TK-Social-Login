@@ -12,6 +12,7 @@
 		.vip-social-login-provider {
 			position: relative;
 			width: 150px;
+			margin: 0 0 20px 0;
 			.cog{
 				position: absolute;
 				top: 5px;
@@ -75,6 +76,12 @@
 							img{
 								background: #fff;
 								margin: 3px 0 0 -5px;
+							}
+						}
+						&.vip-social-login-provider-twitter{
+							background: #1DA1F2;
+							img{
+								margin: 4px 0 0 0;
 							}
 						}
 					}

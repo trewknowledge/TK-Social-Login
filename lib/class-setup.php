@@ -2,6 +2,8 @@
 
 namespace TK\Social_Login;
 
+session_start();
+
 class Setup {
 	function __construct() {
 		$this->setup();
@@ -34,6 +36,22 @@ class Setup {
 			return $new_username;
 		} else {
 			return self::generate_unique_username( $username, ++$i);
+		}
+	}
+
+	protected static function generate_unique_email( $email ) {
+		$email = sanitize_email( $email );
+
+		if ( ! email_exists( $email ) ) {
+			return $email;
+		}
+
+		$new_email = explode( '@', $email );
+		$new_email = sprintf( '%s-%s@%s', $new_email[0], rand(), $new_email[1] );
+		if ( ! email_exists( $new_email ) ) {
+			return $new_email;
+		} else {
+			return self::generate_unique_email( $new_email );
 		}
 	}
 
@@ -128,9 +146,6 @@ class Setup {
 						echo "<p>Error getting long-lived access token: " . $e->getMessage() . "</p>\n\n";
 						exit;
 					}
-
-					error_log( '<h3>Long-lived</h3>' );
-					error_log( print_r( $access_token->getValue() ) );
 				}
 
 				try {
@@ -148,9 +163,6 @@ class Setup {
 				}
 
 				$me = $response->getGraphUser();
-				error_log(print_r($me->getProperty('email'), true));
-				error_log(print_r($me, true));
-				echo 'Logged in as ' . $me->getName();
 
 				if ( email_exists( $me->getProperty( 'email' ) ) ) { // Found a user with the same email.
 
@@ -163,16 +175,13 @@ class Setup {
 						add_user_meta( $user_info->ID, "vip_social_login_{$provider}_uid", $me->getProperty( 'id' ), true );
 					}
 
-					wp_safe_redirect( home_url() );
-					exit;
-
 				} else if ( false ) { // Check if we found any secondary emails.
 					echo 'Checking if we can find any secondary emails.';
 				} else { // User not found. Create one.
 					echo 'User not found.';
 					$username = $email = $me->getProperty( 'email' );
 					if ( $me->getProperty( 'name' ) ) {
-						$username = $this->generate_unique_username( $me->getProperty( 'name' ) );
+						$username = self::generate_unique_username( $me->getProperty( 'name' ) );
 					}
 					$password = wp_generate_password();
 
@@ -180,9 +189,68 @@ class Setup {
 					add_user_meta( $new_user_id, "vip_social_login_{$provider}_uid", $me->getProperty( 'id' ), true );
 
 					$this->login( $new_user_id );
-
-					wp_safe_redirect( home_url() );
 				}
+
+				wp_safe_redirect( home_url() );
+				exit;
+
+				break;
+			case 'twitter':
+				$consumer_key = get_option( 'vip-social-login_twitter_consumer_key', '' );
+				$consumer_secret = get_option( 'vip-social-login_twitter_consumer_secret', '' );
+
+				if ( ! $consumer_key || ! $consumer_secret || ! isset( $_GET['oauth_verifier'], $_GET['oauth_token'] ) || $_GET['oauth_token'] !== $_SESSION['oauth_token'] ) {
+					return;
+				}
+
+				if ( ! $_SESSION['access_token'] ) {
+					$request_token = array();
+					$request_token['oauth_token'] = $_GET['oauth_token'];
+					$tw = new \Abraham\TwitterOAuth\TwitterOAuth( $consumer_key, $consumer_secret, $_SESSION['oauth_token'], $_SESSION['oauth_token_secret'] );
+					$_SESSION['access_token'] = $tw->oauth( 'oauth/access_token', array( 'oauth_verifier' => $_GET['oauth_verifier'] ) );
+				}
+
+				$tw = new \Abraham\TwitterOAuth\TwitterOAuth( $consumer_key, $consumer_secret, $_SESSION['access_token']['oauth_token'], $_SESSION['access_token']['oauth_token_secret'] );
+
+				$user = $tw->get( 'account/verify_credentials', array( 'include_email' => true ) );
+
+				if ( ! $user->id ) {
+					wp_safe_redirect( wp_login_url() );
+				}
+
+
+				if ( $user->email && email_exists( $user->email ) ) { // Found a user with the same email.
+
+					$user_info = get_user_by( 'email', $user->email );
+
+					$this->login( $user_info->ID );
+
+					$provider_uid = get_user_meta( $user_info->ID, "vip_social_login_{$provider}_uid", true );
+					if ( ! $provider_uid ) {
+						add_user_meta( $user_info->ID, "vip_social_login_{$provider}_uid", $user->id, true );
+					}
+
+				} else {
+					$username = self::generate_unique_username( $user->screen_name );
+					$password = wp_generate_password();
+
+					if ( ! $user->email ) {
+						$host = wp_parse_url( home_url() );
+						$email = $provider . '_user@' . $host['host'];
+						$email = self::generate_unique_email( $provider . '_user@' . $host['host'] );
+						error_log( $email );
+					}
+
+					$new_user_id = wp_create_user( $username, $password, $email );
+					add_user_meta( $new_user_id, "vip_social_login_{$provider}_uid", $user->id, true );
+
+					$this->login( $new_user_id );
+				}
+
+
+
+				wp_safe_redirect( home_url() );
+				exit;
 
 				break;
 		}

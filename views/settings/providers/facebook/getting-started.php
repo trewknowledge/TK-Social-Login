@@ -13,7 +13,7 @@
 	<li><?php echo sprintf( esc_html_x( 'Fill "Site URL" with the url of your homepage, probably: %1$s', 'Admin(Facebook) - Getting started', 'vip-social-login' ), '<strong>' . esc_url( home_url('/') ) . '</strong>' ); ?></li>
 	<li><?php echo esc_html_x( 'Click on "Save"', 'Admin(Facebook) - Getting started', 'vip-social-login' ); ?></li>
 	<li><?php echo esc_html_x( 'In the left sidebar, click on "Facebook Login"', 'Admin(Facebook) - Getting started', 'vip-social-login' ); ?></li>
-	<li><?php echo sprintf( esc_html_x( 'Add the following URL to the "Valid OAuth redirect URIs" field: %1$s', 'Admin(Facebook) - Getting started', 'vip-social-login' ), '<strong>' . esc_url( home_url( '/wp-login.php?vip-social-login-provider=facebook' ) ) . '</strong>' ); ?></li>
+	<li><?php echo sprintf( esc_html_x( 'Add the following URL to the "Valid OAuth redirect URIs" field: %1$s', 'Admin(Facebook) - Getting started', 'vip-social-login' ), '<strong>' . esc_url( wp_login_url() . '?vip_social_login_provider=facebook' ) . '</strong>' ); ?></li>
 	<li><?php echo esc_html_x( 'Click on "Save Changes"', 'Admin(Facebook) - Getting started', 'vip-social-login' ); ?></li>
 	<li><?php echo esc_html_x( 'In the top of the left sidebar, click on "Settings"', 'Admin(Facebook) - Getting started', 'vip-social-login' ); ?></li>
 	<li><?php echo esc_html_x( 'Here you can see your "APP ID" and you can see your "App secret" if you click on the "Show" button. These will be needed in plugin\'s settings.', 'Admin(Facebook) - Getting started', 'vip-social-login' ); ?></li>

@@ -1,5 +1,5 @@
 <form action="options.php" method="post" class="vip-social-login-settings-form">
-	<?php settings_fields( 'vip-social-login' ); ?>
+	<?php settings_fields( 'vip-social-login-facebook' ); ?>
 
 	<table class="form-table">
 		<tbody>

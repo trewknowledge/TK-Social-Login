@@ -36,6 +36,11 @@ msgstr ""
 msgid "Autoloader not found."
 msgstr ""
 
+#: ../lib/class-providers.php:38
+msgctxt "Login Button"
+msgid "Log in with Facebook"
+msgstr ""
+
 #: ../lib/class-setup-admin.php:22
 msgid "Social Login"
 msgstr ""
@@ -75,17 +80,17 @@ msgstr ""
 msgid "Providers"
 msgstr ""
 
-#: ../views/settings/providers.php:9
+#: ../views/settings/providers.php:9, ../views/settings/providers.php:17
 msgctxt "Toggle On/Off Status"
 msgid "OFF"
 msgstr ""
 
-#: ../views/settings/providers.php:10
+#: ../views/settings/providers.php:10, ../views/settings/providers.php:18
 msgctxt "Toggle On/Off Status"
 msgid "ON"
 msgstr ""
 
-#: ../views/settings/providers.php:22
+#: ../views/settings/providers.php:30
 msgctxt "Admin updating indicator"
 msgid "Updating..."
 msgstr ""
