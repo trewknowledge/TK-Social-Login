@@ -38,17 +38,11 @@ if ( ! defined( 'WPINC' ) ) {
 define( 'VIP_SOCIAL_LOGIN_VERSION', '1.0.0' );
 define( 'VIP_SOCIAL_LOGIN_MIN_PHP_VERSION', '5.6' );
 define( 'VIP_SOCIAL_LOGIN_MIN_WP_VERSION', '4.3' );
-define( 'VIP_SOCIAL_LOGIN_CONFIG', array(
-	'plugin' => array(
-		'slug'          => 'vip-social-login',
-		'url'           => plugin_dir_url( __FILE__ ),
-		'path'          => plugin_dir_path( __FILE__ ),
-		'template_path' => plugin_dir_path( __FILE__ ) . 'views/',
-	),
-	'help'   => array(
-			'url' => 'https://trewknowledge.com/vip-social-login/',
-	),
-));
+define( 'VIP_SOCIAL_LOGIN_SLUG', 'vip-social-login');
+define( 'VIP_SOCIAL_LOGIN_URL', plugin_dir_url( __FILE__ ) );
+define( 'VIP_SOCIAL_LOGIN_PATH', plugin_dir_path( __FILE__ ) );
+define( 'VIP_SOCIAL_LOGIN_TEMPLATE_PATH', plugin_dir_path( __FILE__ ) . 'views/' );
+define( 'VIP_SOCIAL_LOGIN_HELP', plugin_dir_path( __FILE__ ) . 'views/' );
 
 $vip_social_login_error = function( $message, $subtitle = '', $title = '' ) {
 	$title = $title ?: esc_html__( 'TK Social Login &rsaquo; Error', 'vip-social-login' );

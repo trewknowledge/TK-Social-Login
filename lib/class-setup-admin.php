@@ -11,7 +11,6 @@ class Setup_Admin {
 	}
 
 	protected function setup() {
-		error_log( $_GET['vip-social-login-provider'] );
 		// Register the main GDPR options page
 		add_action( 'admin_menu', array( $this, 'register_options_page' ) );
 		// add_action( 'admin_init', array( $this->settings_page, 'init' ) );
@@ -29,22 +28,22 @@ class Setup_Admin {
 
 	public function enqueue() {
 		wp_enqueue_style(
-			VIP_SOCIAL_LOGIN_CONFIG['plugin']['slug'],
-			VIP_SOCIAL_LOGIN_CONFIG['plugin']['url'] . 'assets/css/admin.css',
+			VIP_SOCIAL_LOGIN_SLUG,
+			VIP_SOCIAL_LOGIN_URL . 'assets/css/admin.css',
 			array(),
 			VIP_SOCIAL_LOGIN_VERSION,
 			'all'
 		);
 		wp_enqueue_script(
-			VIP_SOCIAL_LOGIN_CONFIG['plugin']['slug'],
-			VIP_SOCIAL_LOGIN_CONFIG['plugin']['url'] . 'assets/js/admin.js',
+			VIP_SOCIAL_LOGIN_SLUG,
+			VIP_SOCIAL_LOGIN_URL . 'assets/js/admin.js',
 			array( 'jquery', 'wp-util', 'jquery-ui-sortable' ),
 			VIP_SOCIAL_LOGIN_VERSION,
 			true
 		);
 
 		wp_localize_script(
-			VIP_SOCIAL_LOGIN_CONFIG['plugin']['slug'],
+			VIP_SOCIAL_LOGIN_SLUG,
 			'TK',
 			array(
 				'i18n' => array(

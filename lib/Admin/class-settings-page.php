@@ -20,6 +20,9 @@ class Settings_Page {
 		register_setting( 'vip-social-login-twitter', 'vip-social-login_twitter_consumer_key', array( 'sanitize_callback' => 'sanitize_text_field') );
 		register_setting( 'vip-social-login-twitter', 'vip-social-login_twitter_consumer_secret', array( 'sanitize_callback' => 'sanitize_text_field') );
 
+		register_setting( 'vip-social-login-google', 'vip-social-login_google_client_id', array( 'sanitize_callback' => 'sanitize_text_field') );
+		register_setting( 'vip-social-login-google', 'vip-social-login_google_client_secret', array( 'sanitize_callback' => 'sanitize_text_field') );
+
 		add_action( 'wp_ajax_vip-social-login-update-providers', array( $this, 'update_active_providers' ) );
 	}
 
@@ -47,12 +50,12 @@ class Settings_Page {
 
 	protected function render_contents( $view, $subview = false, $tab = false ) {
 		if ( $tab ) {
-			include( VIP_SOCIAL_LOGIN_CONFIG['plugin']['template_path'] . 'settings/providers/' . $subview . '/header.php' );
-			include( VIP_SOCIAL_LOGIN_CONFIG['plugin']['template_path'] . 'settings/providers/' . $subview . '/' . $tab . '.php' );
+			include( VIP_SOCIAL_LOGIN_TEMPLATE_PATH . 'settings/providers/' . $subview . '/header.php' );
+			include( VIP_SOCIAL_LOGIN_TEMPLATE_PATH . 'settings/providers/' . $subview . '/' . $tab . '.php' );
 		} else if ( $subview ) {
-			include( VIP_SOCIAL_LOGIN_CONFIG['plugin']['template_path'] . 'settings/providers/' . $subview . '.php' );
+			include( VIP_SOCIAL_LOGIN_TEMPLATE_PATH . 'settings/providers/' . $subview . '.php' );
 		} else {
-			include( VIP_SOCIAL_LOGIN_CONFIG['plugin']['template_path'] . 'settings/' . $view . '.php' );
+			include( VIP_SOCIAL_LOGIN_TEMPLATE_PATH . 'settings/' . $view . '.php' );
 		}
 	}
 
@@ -60,9 +63,9 @@ class Settings_Page {
 		$view = isset( $_GET['view'] ) ? esc_html( $_GET['view'] ) : 'providers';
 		$subview = isset( $_GET['subview'] ) ? esc_html( $_GET['subview'] ) : '';
 		$tab = isset( $_GET['tab'] ) ? esc_html( $_GET['tab'] ) : '';
-		include( VIP_SOCIAL_LOGIN_CONFIG['plugin']['template_path'] . 'settings/header.php' );
+		include( VIP_SOCIAL_LOGIN_TEMPLATE_PATH . 'settings/header.php' );
 		$this->render_contents( $view, $subview, $tab );
-		include( VIP_SOCIAL_LOGIN_CONFIG['plugin']['template_path'] . 'settings/footer.php' );
+		include( VIP_SOCIAL_LOGIN_TEMPLATE_PATH . 'settings/footer.php' );
 	}
 
 }

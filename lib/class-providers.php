@@ -40,7 +40,6 @@ class Providers {
 				$button_text = get_option( 'vip-social-login_facebook_button_text', esc_html_x( 'Log in with Facebook', 'Login Button', 'vip-social-login') );
 				$button_text = apply_filters( 'vip_social_login/providers/facebook/button_text', $button_text );
 
-				echo '<a href="' . esc_url( $login_url ) . '">' . $button_text . '</a>';
 				break;
 			case 'twitter':
 				$consumer_key = get_option( 'vip-social-login_twitter_consumer_key', '' );
@@ -61,8 +60,23 @@ class Providers {
 				$button_text = get_option( 'vip-social-login_twitter_button_text', esc_html_x( 'Log in with twitter', 'Login Button', 'vip-social-login') );
 				$button_text = apply_filters( 'vip_social_login/providers/twitter/button_text', $button_text );
 
-				echo '<a href="' . esc_url( $login_url ) . '">' . $button_text . '</a>';
+				break;
+			case 'google':
+				$client_id = get_option( 'vip-social-login_google_client_id', '' );
+				$client_secret = get_option( 'vip-social-login_google_client_secret', '' );
+
+				if ( ! $client_id || ! $client_secret ) {
+					return;
+				}
+
+				$login_url = 'https://accounts.google.com/o/oauth2/v2/auth?scope=' . urlencode('https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/plus.me') . '&redirect_uri=' . urlencode( wp_login_url() . '?vip_social_login_provider=google' ) . '&response_type=code&client_id=' . $client_id . '&access_type=online';
+
+				$button_text = get_option( 'vip-social-login_google_button_text', esc_html_x( 'Log in with Google', 'Login Button', 'vip-social-login') );
+				$button_text = apply_filters( 'vip_social_login/providers/google/button_text', $button_text );
+
 				break;
 		}
+		$onclick = "window.open( '{$login_url}', 'popUpWindow', 'height=410,width=620,left=10,top=10,resizable=yes,scrollbars=yes,toolbar=yes,menubar=no,location=no,directories=no,status=yes');return false";
+		echo '<a href="' . $login_url . '" onclick="' . $onclick . '">' . $button_text . '</a>';
 	}
 }

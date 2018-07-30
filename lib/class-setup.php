@@ -16,8 +16,8 @@ class Setup {
 
 	public function enqueue() {
 		wp_enqueue_script(
-			VIP_SOCIAL_LOGIN_CONFIG['plugin']['slug'],
-			VIP_SOCIAL_LOGIN_CONFIG['plugin']['url'] . 'assets/js/login.js',
+			VIP_SOCIAL_LOGIN_SLUG,
+			VIP_SOCIAL_LOGIN_URL . 'assets/js/login.js',
 			array( 'jquery' ),
 			VIP_SOCIAL_LOGIN_VERSION,
 			true
@@ -55,15 +55,40 @@ class Setup {
 		}
 	}
 
-	public function login( $user_id ) {
+	protected function login_from_provider( $user_id, $uid, $provider ) {
+
+		$provider_uid = get_user_meta( $user_id, "vip_social_login_{$provider}_uid", true );
+		if ( ! $provider_uid ) {
+			add_user_meta( $user_id, "vip_social_login_{$provider}_uid", $uid, true );
+		}
+
 		wp_set_current_user( $user_id );
 
 		$secure_cookie = is_ssl();
-		$secure_cookie = apply_filters('secure_signon_cookie', $secure_cookie, array());
+		$secure_cookie = apply_filters( 'secure_signon_cookie', $secure_cookie, array() );
 		global $auth_secure_cookie; // XXX ugly hack to pass this to wp_authenticate_cookie
 
 		$auth_secure_cookie = $secure_cookie;
-		wp_set_auth_cookie($user_id, true, $secure_cookie);
+		wp_set_auth_cookie( $user_id, true, $secure_cookie );
+
+		echo "<script>
+            window.close();
+    window.opener.location.reload();
+        </script>";
+		exit;
+	}
+
+	protected function create_user_from_provider( $name, $email, $provider ) {
+		$username = self::generate_unique_username( $name );
+		$password = wp_generate_password();
+
+		if ( ! $email ) {
+			$host = wp_parse_url( home_url() );
+			$email = $provider . '_user@' . $host['host'];
+			$email = self::generate_unique_email( $provider . '_user@' . $host['host'] );
+		}
+
+		return wp_create_user( $username, $password, $email );
 	}
 
 	public function check_login_provider() {
@@ -164,35 +189,16 @@ class Setup {
 
 				$me = $response->getGraphUser();
 
-				if ( email_exists( $me->getProperty( 'email' ) ) ) { // Found a user with the same email.
-
-					$user_info = get_user_by( 'email', $me->getProperty( 'email' ) );
-
-					$this->login( $user_info->ID );
-
-					$provider_uid = get_user_meta( $user_info->ID, "vip_social_login_{$provider}_uid", true );
-					if ( ! $provider_uid ) {
-						add_user_meta( $user_info->ID, "vip_social_login_{$provider}_uid", $me->getProperty( 'id' ), true );
-					}
-
-				} else if ( false ) { // Check if we found any secondary emails.
-					echo 'Checking if we can find any secondary emails.';
-				} else { // User not found. Create one.
-					echo 'User not found.';
-					$username = $email = $me->getProperty( 'email' );
-					if ( $me->getProperty( 'name' ) ) {
-						$username = self::generate_unique_username( $me->getProperty( 'name' ) );
-					}
-					$password = wp_generate_password();
-
-					$new_user_id = wp_create_user( $username, $password, $email );
-					add_user_meta( $new_user_id, "vip_social_login_{$provider}_uid", $me->getProperty( 'id' ), true );
-
-					$this->login( $new_user_id );
+				if ( ! $me->getProperty( 'id' ) ) {
+					wp_safe_redirect( wp_login_url() );
 				}
 
-				wp_safe_redirect( home_url() );
-				exit;
+				if ( $me->getProperty( 'email' ) && email_exists( $me->getProperty( 'email' ) ) ) { // Found a user with the same email.
+					$this->login_from_provider( email_exists( $me->getProperty( 'email' ) ), $me->getProperty( 'id' ), $provider );
+				} else { // User not found. Create one.
+					$new_user = $this->create_user_from_provider( $me->getProperty( 'name' ), $me->getProperty( 'email' ) ?: '', $provider );
+					$this->login_from_provider( $new_user, $me->getProperty( 'id' ), $provider );
+				}
 
 				break;
 			case 'twitter':
@@ -218,40 +224,44 @@ class Setup {
 					wp_safe_redirect( wp_login_url() );
 				}
 
-
-				if ( $user->email && email_exists( $user->email ) ) { // Found a user with the same email.
-
-					$user_info = get_user_by( 'email', $user->email );
-
-					$this->login( $user_info->ID );
-
-					$provider_uid = get_user_meta( $user_info->ID, "vip_social_login_{$provider}_uid", true );
-					if ( ! $provider_uid ) {
-						add_user_meta( $user_info->ID, "vip_social_login_{$provider}_uid", $user->id, true );
-					}
-
+				if ( isset( $user->email ) && email_exists( $user->email ) ) { // Found a user with the same email.
+					$this->login_from_provider( email_exists( $user->email ), $user->id, $provider );
 				} else {
-					$username = self::generate_unique_username( $user->screen_name );
-					$password = wp_generate_password();
+					$new_user = $this->create_user_from_provider( $user->screen_name, $user->email ?: '', $provider );
+					$this->login_from_provider( $new_user, $user->id, $provider );
+				}
+				break;
+			case 'google':
+				$client_id = get_option( 'vip-social-login_google_client_id', '' );
+				$client_secret = get_option( 'vip-social-login_google_client_secret', '' );
 
-					if ( ! $user->email ) {
-						$host = wp_parse_url( home_url() );
-						$email = $provider . '_user@' . $host['host'];
-						$email = self::generate_unique_email( $provider . '_user@' . $host['host'] );
-						error_log( $email );
-					}
-
-					$new_user_id = wp_create_user( $username, $password, $email );
-					add_user_meta( $new_user_id, "vip_social_login_{$provider}_uid", $user->id, true );
-
-					$this->login( $new_user_id );
+				if ( ! $client_id || ! $client_secret || ! isset( $_GET['code'] ) ) {
+					return;
 				}
 
 
+				$google = new \Google_Client();
+				$google->setClientId( $client_id );
+				$google->setClientSecret( $client_secret );
+				$google->setApplicationName( 'VIP Social Login' );
+				$google->setRedirectUri( wp_login_url() . '?vip_social_login_provider=google' );
+				$google->addScope( 'https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/plus.me' );
 
-				wp_safe_redirect( home_url() );
-				exit;
+				$token = $google->fetchAccessTokenWithAuthCode( $_GET['code'] );
 
+				$oauth = new \Google_Service_Oauth2( $google );
+				$user = $oauth->userinfo_v2_me->get();
+
+				if ( ! $user->id ) {
+					wp_safe_redirect( wp_login_url() );
+				}
+
+				if ( isset( $user->email ) && email_exists( $user->email ) ) { // Found a user with the same email.
+					$this->login_from_provider( email_exists( $user->email ), $user->id, $provider );
+				} else {
+					$new_user = $this->create_user_from_provider( $user->name, $user->email ?: '', $provider );
+					$this->login_from_provider( $new_user, $user->id, $provider );
+				}
 				break;
 		}
 	}

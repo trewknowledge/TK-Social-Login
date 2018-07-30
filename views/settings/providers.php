@@ -10,7 +10,7 @@
 			<div class="vip-social-login-toggle-option-on vip-social-login-toggle-option"><?php echo esc_html_x( 'ON', 'Toggle On/Off Status', 'vip-social-login' ); ?></div>
 			<input <?php checked( ( isset( $providers['facebook'] ) && $providers['facebook'] ? true : false ), true ); ?> type="checkbox" data-nonce="<?php echo wp_create_nonce('vip-social-login-update-providers'); ?>" data-provider="facebook" name="vip-social-login-provider[facebook]" id="vip-social-login-toggle-provider-fb">
 			<label class="vip-social-login-toggle-current-status" for="vip-social-login-toggle-provider-fb">
-				<span class="vip-social-login-provider-fb"><img src="<?php echo VIP_SOCIAL_LOGIN_CONFIG['plugin']['url'] . 'assets/img/facebook.png' ?>" alt=""></span>
+				<span class="vip-social-login-provider-fb"><img src="<?php echo VIP_SOCIAL_LOGIN_URL . 'assets/img/facebook.png' ?>" alt=""></span>
 			</label>
 		</div>
 	</div>
@@ -21,7 +21,18 @@
 			<div class="vip-social-login-toggle-option-on vip-social-login-toggle-option"><?php echo esc_html_x( 'ON', 'Toggle On/Off Status', 'vip-social-login' ); ?></div>
 			<input <?php checked( ( isset( $providers['twitter'] ) && $providers['twitter'] ? true : false ), true ); ?> type="checkbox" data-nonce="<?php echo wp_create_nonce('vip-social-login-update-providers'); ?>" data-provider="twitter" name="vip-social-login-provider[twitter]" id="vip-social-login-toggle-provider-twitter">
 			<label class="vip-social-login-toggle-current-status" for="vip-social-login-toggle-provider-twitter">
-				<span class="vip-social-login-provider-twitter"><img src="<?php echo VIP_SOCIAL_LOGIN_CONFIG['plugin']['url'] . 'assets/img/twitter.png' ?>" alt=""></span>
+				<span class="vip-social-login-provider-twitter"><img src="<?php echo VIP_SOCIAL_LOGIN_URL . 'assets/img/twitter.png' ?>" alt=""></span>
+			</label>
+		</div>
+	</div>
+	<div class="vip-social-login-provider">
+		<a href="<?php echo esc_url( admin_url('options-general.php?page=vip-social-login&view=providers&subview=google&tab=getting-started') ) ?>" class="cog"><span class="dashicons dashicons-admin-generic"></span></a>
+		<div class="vip-social-login-toggle">
+			<div class="vip-social-login-toggle-option-off vip-social-login-toggle-option"><?php echo esc_html_x( 'OFF', 'Toggle On/Off Status', 'vip-social-login' ); ?></div>
+			<div class="vip-social-login-toggle-option-on vip-social-login-toggle-option"><?php echo esc_html_x( 'ON', 'Toggle On/Off Status', 'vip-social-login' ); ?></div>
+			<input <?php checked( ( isset( $providers['google'] ) && $providers['google'] ? true : false ), true ); ?> type="checkbox" data-nonce="<?php echo wp_create_nonce('vip-social-login-update-providers'); ?>" data-provider="google" name="vip-social-login-provider[google]" id="vip-social-login-toggle-provider-google">
+			<label class="vip-social-login-toggle-current-status" for="vip-social-login-toggle-provider-google">
+				<span class="vip-social-login-provider-google"><img src="<?php echo VIP_SOCIAL_LOGIN_URL . 'assets/img/google.png' ?>" alt=""></span>
 			</label>
 		</div>
 	</div>

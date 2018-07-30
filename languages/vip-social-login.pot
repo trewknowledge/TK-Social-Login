@@ -36,9 +36,14 @@ msgstr ""
 msgid "Autoloader not found."
 msgstr ""
 
-#: ../lib/class-providers.php:38
+#: ../lib/class-providers.php:40
 msgctxt "Login Button"
 msgid "Log in with Facebook"
+msgstr ""
+
+#: ../lib/class-providers.php:61
+msgctxt "Login Button"
+msgid "Log in with twitter"
 msgstr ""
 
 #: ../lib/class-setup-admin.php:22
@@ -80,17 +85,17 @@ msgstr ""
 msgid "Providers"
 msgstr ""
 
-#: ../views/settings/providers.php:9, ../views/settings/providers.php:17
+#: ../views/settings/providers.php:9, ../views/settings/providers.php:20, ../views/settings/providers.php:31
 msgctxt "Toggle On/Off Status"
 msgid "OFF"
 msgstr ""
 
-#: ../views/settings/providers.php:10, ../views/settings/providers.php:18
+#: ../views/settings/providers.php:10, ../views/settings/providers.php:21, ../views/settings/providers.php:32
 msgctxt "Toggle On/Off Status"
 msgid "ON"
 msgstr ""
 
-#: ../views/settings/providers.php:30
+#: ../views/settings/providers.php:44
 msgctxt "Admin updating indicator"
 msgid "Updating..."
 msgstr ""
@@ -200,12 +205,12 @@ msgctxt "Admin(Facebook) - Getting started"
 msgid "I am done setting up my Facebook App"
 msgstr ""
 
-#: ../views/settings/providers/facebook/header.php:5, ../views/settings/providers/facebook/header.php:5
+#: ../views/settings/providers/facebook/header.php:5, ../views/settings/providers/facebook/header.php:5, ../views/settings/providers/google/header.php:5, ../views/settings/providers/google/header.php:5, ../views/settings/providers/twitter/header.php:5, ../views/settings/providers/twitter/header.php:5
 msgctxt "Admin - provider tab navigation"
 msgid "Getting Started"
 msgstr ""
 
-#: ../views/settings/providers/facebook/header.php:6, ../views/settings/providers/facebook/header.php:6
+#: ../views/settings/providers/facebook/header.php:6, ../views/settings/providers/facebook/header.php:6, ../views/settings/providers/google/header.php:6, ../views/settings/providers/google/header.php:6, ../views/settings/providers/twitter/header.php:6, ../views/settings/providers/twitter/header.php:6
 msgctxt "Admin - provider tab navigation"
 msgid "Settings"
 msgstr ""
@@ -218,4 +223,159 @@ msgstr ""
 #: ../views/settings/providers/facebook/settings.php:17
 msgctxt "Admin(Facebook) - Settings"
 msgid "APP Secret"
+msgstr ""
+
+#: ../views/settings/providers/google/getting-started.php:1
+msgctxt "Admin(Google) - Getting started"
+msgid "To allow your visitors to log in with their Google account, first you must create a Google App. The following guide will help you through the Google App creation process. After you have created your Google App, head over to \"Settings\" and configure the given \"Client ID\" and \"Client secret\" according to your Google App."
+msgstr ""
+
+#: ../views/settings/providers/google/getting-started.php:3
+msgctxt "Admin(Google) - Getting started"
+msgid "Create Google App"
+msgstr ""
+
+#: ../views/settings/providers/google/getting-started.php:6
+msgctxt "Admin(Google) - Getting started"
+msgid "Navigate to %1$s"
+msgstr ""
+
+#: ../views/settings/providers/google/getting-started.php:7
+msgctxt "Admin(Google) - Getting started"
+msgid "Log in with your Google credentials if you are not logged in"
+msgstr ""
+
+#: ../views/settings/providers/google/getting-started.php:8
+msgctxt "Admin(Google) - Getting started"
+msgid "If you don't have a project yet, you'll need to create one. You can do this by clicking on the blue \"Create project\" button on the right side"
+msgstr ""
+
+#: ../views/settings/providers/google/getting-started.php:9
+msgctxt "Admin(Google) - Getting started"
+msgid "Name your project and then click on the Create button"
+msgstr ""
+
+#: ../views/settings/providers/google/getting-started.php:10
+msgctxt "Admin(Google) - Getting started"
+msgid "Once you have a project, you'll end up in the dashboard."
+msgstr ""
+
+#: ../views/settings/providers/google/getting-started.php:11
+msgctxt "Admin(Google) - Getting started"
+msgid "Click on the \"Credentials\" in the left hand menu to create new API credentials"
+msgstr ""
+
+#: ../views/settings/providers/google/getting-started.php:12
+msgctxt "Admin(Google) - Getting started"
+msgid "Go to the OAuth consent screen tab and enter a product name and provide the Privacy Policy URL, then click on the save button."
+msgstr ""
+
+#: ../views/settings/providers/google/getting-started.php:13
+msgctxt "Admin(Google) - Getting started"
+msgid "Go back to the Credentials tab and locate the small box at the middle. Click on the blue \"Create credentials\" button. Chose the \"OAuth client ID\" from the dropdown list."
+msgstr ""
+
+#: ../views/settings/providers/google/getting-started.php:14
+msgctxt "Admin(Google) - Getting started"
+msgid "Your application type should be \"Web application\""
+msgstr ""
+
+#: ../views/settings/providers/google/getting-started.php:15
+msgctxt "Admin(Google) - Getting started"
+msgid "Name your application"
+msgstr ""
+
+#: ../views/settings/providers/google/getting-started.php:16
+msgctxt "Admin(Google) - Getting started"
+msgid "Add the following URL to the \"Authorised redirect URIs\" field: %1$s"
+msgstr ""
+
+#: ../views/settings/providers/google/getting-started.php:17
+msgctxt "Admin(Google) - Getting started"
+msgid "Click on the Create button"
+msgstr ""
+
+#: ../views/settings/providers/google/getting-started.php:18
+msgctxt "Admin(Google) - Getting started"
+msgid "A modal should pop up with your credentials. If that doesn't happen, go to the Credentials in the left hand menu and select your app by clicking on its name and you'll be able to copy-paste the Client ID and Client Secret from there."
+msgstr ""
+
+#: ../views/settings/providers/google/getting-started.php:21
+msgctxt "Admin(Google) - Getting started"
+msgid "I am done setting up my Google App"
+msgstr ""
+
+#: ../views/settings/providers/google/settings.php:8
+msgctxt "Admin(Google) - Settings"
+msgid "Consumer Key"
+msgstr ""
+
+#: ../views/settings/providers/google/settings.php:17
+msgctxt "Admin(Google) - Settings"
+msgid "Consumer Secret"
+msgstr ""
+
+#: ../views/settings/providers/twitter/getting-started.php:1
+msgctxt "Admin(Twitter) - Getting started"
+msgid "To allow your visitors to log in with their Twitter account, first you must create a Twitter App. The following guide will help you through the Twitter App creation process. After you have created your Twitter App, head over to \"Settings\" and configure the given \"Consumer Key\" and \"Consumer Secret\" according to your Twitter App."
+msgstr ""
+
+#: ../views/settings/providers/twitter/getting-started.php:3
+msgctxt "Admin(Twitter) - Getting started"
+msgid "Create Twitter App"
+msgstr ""
+
+#: ../views/settings/providers/twitter/getting-started.php:6
+msgctxt "Admin(Twitter) - Getting started"
+msgid "Navigate to %1$s"
+msgstr ""
+
+#: ../views/settings/providers/twitter/getting-started.php:7
+msgctxt "Admin(Twitter) - Getting started"
+msgid "Log in with your Twitter credentials if you are not logged in"
+msgstr ""
+
+#: ../views/settings/providers/twitter/getting-started.php:8
+msgctxt "Admin(Twitter) - Getting started"
+msgid "Click on the \"Create New App\" button"
+msgstr ""
+
+#: ../views/settings/providers/twitter/getting-started.php:9
+msgctxt "Admin(Twitter) - Getting started"
+msgid "Fill the name and description fields. Then enter your site's URL to the Website field: %1$s"
+msgstr ""
+
+#: ../views/settings/providers/twitter/getting-started.php:10
+msgctxt "Admin(Twitter) - Getting started"
+msgid "Add the following URL to the \"Callback URL\" field: %1$s"
+msgstr ""
+
+#: ../views/settings/providers/twitter/getting-started.php:11
+msgctxt "Admin(Twitter) - Getting started"
+msgid "Accept the Twitter Developer Agreement"
+msgstr ""
+
+#: ../views/settings/providers/twitter/getting-started.php:12
+msgctxt "Admin(Twitter) - Getting started"
+msgid "Create your application by clicking on the Create your Twitter application button"
+msgstr ""
+
+#: ../views/settings/providers/twitter/getting-started.php:13
+msgctxt "Admin(Twitter) - Getting started"
+msgid "Go to the Keys and Access Tokens tab and find the Consumer Key and Secret\""
+msgstr ""
+
+#: ../views/settings/providers/twitter/getting-started.php:16
+msgctxt "Admin(Twitter) - Getting started"
+msgid "I am done setting up my Twitter App"
+msgstr ""
+
+#: ../views/settings/providers/twitter/settings.php:8
+msgctxt "Admin(Twitter) - Settings"
+msgid "Consumer Key"
+msgstr ""
+
+#: ../views/settings/providers/twitter/settings.php:17
+msgctxt "Admin(Twitter) - Settings"
+msgid "Consumer Secret"
 msgstr ""
