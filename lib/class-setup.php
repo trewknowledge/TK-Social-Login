@@ -31,7 +31,6 @@ class Setup {
 	}
 
 	public function disconnect_network() {
-		error_log('HERE');
 		if ( ! isset( $_POST['nonce'], $_POST['user_id'], $_POST['provider'] ) || ! wp_verify_nonce( sanitize_key( wp_unslash( $_POST['nonce'] ) ), 'vsl_action' ) ) {
 			wp_send_json_error();
 		}
