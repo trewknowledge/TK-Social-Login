@@ -13,46 +13,55 @@ msgstr ""
 "X-Poedit-SourceCharset: UTF-8\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: ../tk-social-login.php:54
+#: ../tk-social-login.php:48
 msgid "TK Social Login &rsaquo; Error"
 msgstr ""
 
-#: ../tk-social-login.php:64, ../tk-social-login.php:74
+#: ../tk-social-login.php:58, ../tk-social-login.php:68
 msgstr ""
 
-#: ../tk-social-login.php:65
+#: ../tk-social-login.php:59
 msgid "Invalid PHP version"
 msgstr ""
 
-#: ../tk-social-login.php:75
+#: ../tk-social-login.php:69
 msgid "Invalid WordPress version"
 msgstr ""
 
-#: ../tk-social-login.php:85
+#: ../tk-social-login.php:79
 msgid "You appear to be running a development version of this plugin. You must run <code>composer install</code> from the plugin dev directory."
 msgstr ""
 
-#: ../tk-social-login.php:86
+#: ../tk-social-login.php:80
 msgid "Autoloader not found."
 msgstr ""
 
-#: ../lib/class-providers.php:40
+#: ../lib/class-providers.php:46
 msgctxt "Login Button"
 msgid "Log in with Facebook"
 msgstr ""
 
-#: ../lib/class-providers.php:61
+#: ../lib/class-providers.php:68
 msgctxt "Login Button"
 msgid "Log in with twitter"
 msgstr ""
 
-#: ../lib/class-setup-admin.php:22
+#: ../lib/class-providers.php:84
+msgctxt "Login Button"
+msgid "Log in with Google"
+msgstr ""
+
+#: ../lib/class-setup-admin.php:21
 msgid "Social Login"
 msgstr ""
 
-#: ../lib/class-setup-admin.php:51
+#: ../lib/class-setup-admin.php:50
 msgctxt "Admin loading indicator"
 msgid "Settings Updated"
+msgstr ""
+
+#: ../lib/class-setup.php:135
+msgid "This network is already connected to another user."
 msgstr ""
 
 #. translators: 1. Link to VIP website 2.Closing </a> tag 3.
@@ -307,12 +316,12 @@ msgstr ""
 
 #: ../views/settings/providers/google/settings.php:8
 msgctxt "Admin(Google) - Settings"
-msgid "Consumer Key"
+msgid "Client ID"
 msgstr ""
 
 #: ../views/settings/providers/google/settings.php:17
 msgctxt "Admin(Google) - Settings"
-msgid "Consumer Secret"
+msgid "Client Secret"
 msgstr ""
 
 #: ../views/settings/providers/twitter/getting-started.php:1

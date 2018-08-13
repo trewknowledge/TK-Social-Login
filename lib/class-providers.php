@@ -18,6 +18,12 @@ class Providers {
 			return;
 		}
 
+		$button_text = $provider;
+		$uid = get_user_meta( get_current_user_id(), "vip_social_login_{$provider}_uid", true );
+
+		$parameters = array( 'vip_social_login_provider' => $provider );
+		$callback_url = add_query_arg( $parameters, wp_login_url() );
+
 		switch ( $provider ) {
 			case 'facebook':
 				$app_id = get_option( 'vip-social-login_facebook_app_id', '' );
@@ -35,10 +41,11 @@ class Providers {
 				$helper = $fb->getRedirectLoginHelper();
 
 				$permissions = array( 'email', 'public_profile', 'user_birthday' ); // Optional permissions
-				$callback_url = add_query_arg( 'vip_social_login_provider', $provider, wp_login_url() );
 				$login_url = $helper->getLoginUrl( $callback_url, $permissions );
-				$button_text = get_option( 'vip-social-login_facebook_button_text', esc_html_x( 'Log in with Facebook', 'Login Button', 'vip-social-login') );
-				$button_text = apply_filters( 'vip_social_login/providers/facebook/button_text', $button_text );
+				if ( ! is_user_logged_in() ) {
+					$button_text = get_option( 'vip-social-login_facebook_button_text', esc_html_x( 'Log in with Facebook', 'Login Button', 'vip-social-login') );
+					$button_text = apply_filters( 'vip_social_login/providers/facebook/button_text', $button_text );
+				}
 
 				break;
 			case 'twitter':
@@ -51,14 +58,16 @@ class Providers {
 
 				$tw = new \Abraham\TwitterOAuth\TwitterOAuth( $consumer_key, $consumer_secret );
 
-				$request_token = $tw->oauth( 'oauth/request_token', array( 'oauth_callback' => wp_login_url() . '?vip_social_login_provider=twitter' ) );
+				$request_token = $tw->oauth( 'oauth/request_token', array( 'oauth_callback' => $callback_url ) );
 				$_SESSION['oauth_token'] = $request_token['oauth_token'];
 				$_SESSION['oauth_token_secret'] = $request_token['oauth_token_secret'];
 
 				$login_url = $tw->url( 'oauth/authenticate', array( 'oauth_token' => $request_token['oauth_token'] ) );
 
-				$button_text = get_option( 'vip-social-login_twitter_button_text', esc_html_x( 'Log in with twitter', 'Login Button', 'vip-social-login') );
-				$button_text = apply_filters( 'vip_social_login/providers/twitter/button_text', $button_text );
+				if ( ! is_user_logged_in() ) {
+					$button_text = get_option( 'vip-social-login_twitter_button_text', esc_html_x( 'Log in with Twitter', 'Login Button', 'vip-social-login') );
+					$button_text = apply_filters( 'vip_social_login/providers/twitter/button_text', $button_text );
+				}
 
 				break;
 			case 'google':
@@ -69,14 +78,20 @@ class Providers {
 					return;
 				}
 
-				$login_url = 'https://accounts.google.com/o/oauth2/v2/auth?scope=' . urlencode('https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/plus.me') . '&redirect_uri=' . urlencode( wp_login_url() . '?vip_social_login_provider=google' ) . '&response_type=code&client_id=' . $client_id . '&access_type=online';
+				$login_url = 'https://accounts.google.com/o/oauth2/v2/auth?scope=' . urlencode('https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/plus.me') . '&redirect_uri=' . urlencode( $callback_url ) . '&response_type=code&client_id=' . $client_id . '&access_type=online';
 
-				$button_text = get_option( 'vip-social-login_google_button_text', esc_html_x( 'Log in with Google', 'Login Button', 'vip-social-login') );
-				$button_text = apply_filters( 'vip_social_login/providers/google/button_text', $button_text );
+				if ( ! is_user_logged_in() ) {
+					$button_text = get_option( 'vip-social-login_google_button_text', esc_html_x( 'Log in with Google', 'Login Button', 'vip-social-login') );
+					$button_text = apply_filters( 'vip_social_login/providers/google/button_text', $button_text );
+				}
 
 				break;
 		}
-		$onclick = "window.open( '{$login_url}', 'popUpWindow', 'height=410,width=620,left=10,top=10,resizable=yes,scrollbars=yes,toolbar=yes,menubar=no,location=no,directories=no,status=yes');return false";
-		echo '<a href="' . $login_url . '" onclick="' . $onclick . '">' . $button_text . '</a>';
+
+		echo '<a href="' . $login_url . '" class="' . ( $uid ? 'vsl-connected' : 'vsl-provider' ) . '" data-provider="' . $provider . '">' . $button_text . '</a>';
+	}
+
+	public function get_connected_networks() {
+		include( VIP_SOCIAL_LOGIN_TEMPLATE_PATH . '/connected-networks.php' );
 	}
 }

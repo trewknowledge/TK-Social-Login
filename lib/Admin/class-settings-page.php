@@ -39,7 +39,7 @@ class Settings_Page {
 			wp_send_json_error();
 		}
 
-		$providers = (array) get_option( 'vip-social-login-providers', array() );
+		$providers = get_option( 'vip-social-login-providers', array() );
 
 		$providers[ $_POST['provider'] ] = $_POST['checked'];
 

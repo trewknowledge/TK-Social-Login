@@ -10,18 +10,38 @@ class Setup {
 	}
 
 	protected function setup() {
-		// add_action( 'login_enqueue_scripts', array( $this, 'enqueue' ) );
+		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_public' ) );
 		add_action( 'login_init', array( $this, 'check_login_provider' ) );
 	}
 
-	public function enqueue() {
+	public function enqueue_public() {
 		wp_enqueue_script(
 			VIP_SOCIAL_LOGIN_SLUG,
-			VIP_SOCIAL_LOGIN_URL . 'assets/js/login.js',
+			VIP_SOCIAL_LOGIN_URL . 'assets/js/public.js',
 			array( 'jquery' ),
 			VIP_SOCIAL_LOGIN_VERSION,
 			true
 		);
+
+		wp_localize_script( VIP_SOCIAL_LOGIN_SLUG, 'VSL', array(
+			'admin_ajax' => admin_url( 'admin-ajax.php' ),
+			'current_user_id' => get_current_user_id(),
+			'nonce' => wp_create_nonce( 'vsl_action' ),
+		) );
+	}
+
+	public function disconnect_network() {
+		error_log('HERE');
+		if ( ! isset( $_POST['nonce'], $_POST['user_id'], $_POST['provider'] ) || ! wp_verify_nonce( sanitize_key( wp_unslash( $_POST['nonce'] ) ), 'vsl_action' ) ) {
+			wp_send_json_error();
+		}
+
+		$user_id = absint( $_POST['user_id'] );
+		$provider = sanitize_text_field( wp_unslash( $_POST['provider'] ) );
+
+		delete_user_meta( $user_id, "vip_social_login_{$provider}_uid" );
+
+		wp_send_json_success();
 	}
 
 	protected static function generate_unique_username( $username, $i = 1 ) {
@@ -55,27 +75,86 @@ class Setup {
 		}
 	}
 
-	protected function login_from_provider( $user_id, $uid, $provider ) {
+	protected function login_from_provider( $name, $email, $uid, $provider ) {
 
-		$provider_uid = get_user_meta( $user_id, "vip_social_login_{$provider}_uid", true );
-		if ( ! $provider_uid ) {
-			add_user_meta( $user_id, "vip_social_login_{$provider}_uid", $uid, true );
+		global $wpdb;
+
+		$meta_key = "vip_social_login_{$provider}_uid";
+
+		if ( ! is_user_logged_in() ) {
+			$user_id = $wpdb->get_var( $wpdb->prepare(
+				"
+				SELECT user.ID
+				FROM $wpdb->users user
+				INNER JOIN $wpdb->usermeta umeta
+					ON user.ID = umeta.user_id
+				WHERE umeta.meta_key = %s
+					AND umeta.meta_value = %s
+				",
+				$meta_key,
+				$uid
+			) );
+
+			// Search for uid in the DB. If found, log in.
+
+			if ( ! $user_id ) {
+				$user_id = email_exists( $email );
+				if ( ! $user_id ) {
+					$user_id = $this->create_user_from_provider( $name, $email ?: '', $provider );
+				}
+			}
+
+			wp_set_current_user( $user_id );
+
+			$secure_cookie = is_ssl();
+			$secure_cookie = apply_filters( 'secure_signon_cookie', $secure_cookie, array() );
+			global $auth_secure_cookie; // XXX ugly hack to pass this to wp_authenticate_cookie
+
+			$auth_secure_cookie = $secure_cookie;
+			wp_set_auth_cookie( $user_id, true, $secure_cookie );
+
+			echo "<script>window.close();window.opener.location.reload();</script>";
+			exit;
+
+		} else {
+			$found_id = $wpdb->get_var( $wpdb->prepare(
+				"
+				SELECT user.ID
+				FROM $wpdb->users user
+				INNER JOIN $wpdb->usermeta umeta
+					ON user.ID = umeta.user_id
+				WHERE umeta.meta_key = %s
+					AND umeta.meta_value = %s
+				",
+				$meta_key,
+				$uid
+			) );
+
+			if ( ! $found_id ) {
+				$user_id = get_current_user_id();
+				update_user_meta( $user_id, "vip_social_login_{$provider}_uid", $uid );
+			} else {
+				$error = urlencode( 'This provider is already associated with another user ' . $found_id );
+				echo "<script>window.close();window.opener.location.href = window.opener.location.href.replace( /[\?#].*|$/, '?vsl_error=100001' );</script>";
+				exit;
+			}
+			echo "<script>window.close();window.opener.location.reload();</script>";
+			exit;
+		}
+	}
+
+	public function error_message() {
+		$code = isset( $_GET['vsl_error'] ) ? absint( $_GET['vsl_error'] ) : false;
+
+		if ( ! $code ) {
+			return;
 		}
 
-		wp_set_current_user( $user_id );
-
-		$secure_cookie = is_ssl();
-		$secure_cookie = apply_filters( 'secure_signon_cookie', $secure_cookie, array() );
-		global $auth_secure_cookie; // XXX ugly hack to pass this to wp_authenticate_cookie
-
-		$auth_secure_cookie = $secure_cookie;
-		wp_set_auth_cookie( $user_id, true, $secure_cookie );
-
-		echo "<script>
-            window.close();
-    window.opener.location.reload();
-        </script>";
-		exit;
+		switch ( $code ) {
+			case '100001':
+				esc_html_e( 'This network is already connected to another user.', 'vip-social-login' );
+				break;
+		}
 	}
 
 	protected function create_user_from_provider( $name, $email, $provider ) {
@@ -190,16 +269,16 @@ class Setup {
 				$me = $response->getGraphUser();
 
 				if ( ! $me->getProperty( 'id' ) ) {
-					wp_safe_redirect( wp_login_url() );
+					if ( ! is_user_logged_in() ) {
+						wp_safe_redirect( wp_login_url() );
+						exit;
+					} else {
+						echo "<script>window.close();window.opener.location.reload();</script>";
+						exit;
+					}
 				}
 
-				if ( $me->getProperty( 'email' ) && email_exists( $me->getProperty( 'email' ) ) ) { // Found a user with the same email.
-					$this->login_from_provider( email_exists( $me->getProperty( 'email' ) ), $me->getProperty( 'id' ), $provider );
-				} else { // User not found. Create one.
-					$new_user = $this->create_user_from_provider( $me->getProperty( 'name' ), $me->getProperty( 'email' ) ?: '', $provider );
-					$this->login_from_provider( $new_user, $me->getProperty( 'id' ), $provider );
-				}
-
+				$this->login_from_provider( $me->getProperty( 'name' ), $me->getProperty( 'email' ), $me->getProperty( 'id' ), $provider );
 				break;
 			case 'twitter':
 				$consumer_key = get_option( 'vip-social-login_twitter_consumer_key', '' );
@@ -221,15 +300,16 @@ class Setup {
 				$user = $tw->get( 'account/verify_credentials', array( 'include_email' => true ) );
 
 				if ( ! $user->id ) {
-					wp_safe_redirect( wp_login_url() );
+					if ( ! is_user_logged_in() ) {
+						wp_safe_redirect( wp_login_url() );
+						exit;
+					} else {
+						echo "<script>window.close();window.opener.location.reload();</script>";
+						exit;
+					}
 				}
 
-				if ( isset( $user->email ) && email_exists( $user->email ) ) { // Found a user with the same email.
-					$this->login_from_provider( email_exists( $user->email ), $user->id, $provider );
-				} else {
-					$new_user = $this->create_user_from_provider( $user->screen_name, $user->email ?: '', $provider );
-					$this->login_from_provider( $new_user, $user->id, $provider );
-				}
+				$this->login_from_provider( $user->screen_name, $user->email, $user->id, $provider );
 				break;
 			case 'google':
 				$client_id = get_option( 'vip-social-login_google_client_id', '' );
@@ -253,15 +333,16 @@ class Setup {
 				$user = $oauth->userinfo_v2_me->get();
 
 				if ( ! $user->id ) {
-					wp_safe_redirect( wp_login_url() );
+					if ( ! is_user_logged_in() ) {
+						wp_safe_redirect( wp_login_url() );
+						exit;
+					} else {
+						echo "<script>window.close();window.opener.location.reload();</script>";
+						exit;
+					}
 				}
 
-				if ( isset( $user->email ) && email_exists( $user->email ) ) { // Found a user with the same email.
-					$this->login_from_provider( email_exists( $user->email ), $user->id, $provider );
-				} else {
-					$new_user = $this->create_user_from_provider( $user->name, $user->email ?: '', $provider );
-					$this->login_from_provider( $new_user, $user->id, $provider );
-				}
+				$this->login_from_provider( $user->name, $user->email, $user->id, $provider );
 				break;
 		}
 	}
