@@ -22,7 +22,7 @@
  * @link       https://trewknowledge.com
  * @since      1.0.0
  *
- * @package    GDPR
+ * @package    VIP_Social_Login
  */
 
 // If uninstall not called from WordPress, then exit.

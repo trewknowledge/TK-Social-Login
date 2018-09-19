@@ -1,12 +1,7 @@
 {
-  "name": "gdpr-wordpress-plugin",
+  "name": "tk-social-login",
   "version": "1.0.0",
   "description": "",
-  "themeName": "gigya",
-  "themeURI": "http://trewknowledge.com",
-  "author": "Trew Knowledge",
-  "authorURI": "http://trewknowledge.com",
-  "textDomain": "gdpr",
   "devDependencies": {
     "gulp": "^3.9.1",
     "gulp-autoprefixer": "^5.0.0",
