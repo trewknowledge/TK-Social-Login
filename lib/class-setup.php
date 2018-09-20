@@ -14,6 +14,9 @@ class Setup {
 		add_action( 'login_init', array( $this, 'check_login_provider' ) );
 	}
 
+	/**
+	 * Enqueue css and js files.
+	 */
 	public function enqueue_public() {
 		wp_enqueue_script(
 			VIP_SOCIAL_LOGIN_SLUG,
@@ -32,6 +35,10 @@ class Setup {
 		);
 	}
 
+	/**
+	 * Disconnect the network from user.
+	 * It removes the network uid from the user_meta (or user_attribute).
+	 */
 	public function disconnect_network() {
 		if ( ! isset( $_POST['nonce'], $_POST['user_id'], $_POST['provider'] ) || ! wp_verify_nonce( sanitize_key( wp_unslash( $_POST['nonce'] ) ), 'vsl_action' ) ) {
 			wp_send_json_error();
@@ -45,6 +52,13 @@ class Setup {
 		wp_send_json_success();
 	}
 
+	/**
+	 * Usernames are created based on their names.
+	 * To make those unique, we append -$n at the end of it.
+	 * @param  string  $username The user name as it is in their social network profile.
+	 * @param  integer $i        The number to be appended.
+	 * @return string            A valid username.
+	 */
 	protected static function generate_unique_username( $username, $i = 1 ) {
 		$username = sanitize_title( strtolower( str_replace( ' ', '', $username ) ) );
 
@@ -60,6 +74,13 @@ class Setup {
 		}
 	}
 
+	/**
+	 * Sometimes social networks don't provide us with an email.
+	 * So we need to generate one. We provide a dummy email to this function
+	 * and it takes care of appending a unique number to the end of it.
+	 * @param  string $email A dummy email.
+	 * @return string        A valid generated and unique email.
+	 */
 	protected static function generate_unique_email( $email ) {
 		$email = sanitize_email( $email );
 
@@ -76,6 +97,17 @@ class Setup {
 		}
 	}
 
+	/**
+	 * Check if we can find a user based on the UID.
+	 * We look into the database to see if we can find a user that has
+	 * the provided UID as a user_meta (or attribute).
+	 * If the user is not logged in we log them in too.
+	 * It's kinda hacky, but it works.
+	 * @param  string $name     The name provided by the network.
+	 * @param  string $email    The email.
+	 * @param  string $uid      The social network UID.
+	 * @param  string $provider The social network name. E.g. google, facebook.
+	 */
 	protected function login_from_provider( $name, $email, $uid, $provider ) {
 
 		global $wpdb;
@@ -147,6 +179,10 @@ class Setup {
 		}
 	}
 
+	/**
+	 * Checks the plugin error code that should be in the url as a get parameter.
+	 * @return string The error message.
+	 */
 	public function error_message() {
 		$code = isset( $_GET['vsl_error'] ) ? absint( $_GET['vsl_error'] ) : false;
 
@@ -161,6 +197,13 @@ class Setup {
 		}
 	}
 
+	/**
+	 * Creates a new user based on a provider.
+	 * @param  string $name     The name of the user.
+	 * @param  string $email    The email.
+	 * @param  string $provider The social network name. E.g. google, facebook.
+	 * @return WP_User          The new user object.
+	 */
 	protected function create_user_from_provider( $name, $email, $provider ) {
 		$username = self::generate_unique_username( $name );
 		$password = wp_generate_password();
@@ -174,6 +217,11 @@ class Setup {
 		return wp_create_user( $username, $password, $email );
 	}
 
+	/**
+	 * Check the provider that is being used and process the login accordingly.
+	 * We use SESSIONS to handle parts of it because it's necessary.
+	 * Facebook and others need to pass access tokens to other pages. We use SESSIONS for that.
+	 */
 	public function check_login_provider() {
 		if ( ! isset( $_GET['vip_social_login_provider'] ) ) {
 			return;

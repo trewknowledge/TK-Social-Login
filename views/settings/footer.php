@@ -10,16 +10,6 @@
 					'<a href="https://trewknowledge.com/" target="_blank">',
 					'</a>'
 				); ?>
-				&nbsp;
-				|
-				&nbsp;
-				<?php echo sprintf(
-					/* Translators: 1. Link to donation page 2.Closing </a> tag 3. Link to plugin review page */
-					esc_html_x('Support our development efforts! %1$sDonate%2$s or leave a %3$s5-star rating%2$s.', 'Admin Settings Page Footer', 'vip-social-login'),
-					'<a href="https://trewknowledge.com/vip-social-login/donate/" target="_blank">',
-					'</a>',
-					'<a href="https://wordpress.org/plugins/vip-social-login/#reviews" target="_blank">'
-				); ?>
 			</em>
 		</p>
 	<?php endif; ?>

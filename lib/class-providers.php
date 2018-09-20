@@ -6,6 +6,11 @@ session_start();
 
 class Providers {
 
+	/**
+	 * Prints one social network login button
+	 * @param  string $provider Name of the provider. E.g. google, facebook.
+	 * @return string           HTML Markup of the button.
+	 */
 	public static function login_button( $provider ) {
 
 		$providers = get_option( 'vip-social-login-providers', array() );
@@ -91,6 +96,10 @@ class Providers {
 		echo '<a href="' . esc_url( $login_url ) . '" class="' . ( $uid ? 'vsl-connected' : 'vsl-provider' ) . '" data-provider="' . esc_attr( $provider ) . '">' . esc_html( $button_text ) . '</a>';
 	}
 
+	/**
+	 * Loads a unordered list with all enabled networks.
+	 * @return [type] [description]
+	 */
 	public function get_connected_networks() {
 		include( VIP_SOCIAL_LOGIN_TEMPLATE_PATH . '/connected-networks.php' );
 	}

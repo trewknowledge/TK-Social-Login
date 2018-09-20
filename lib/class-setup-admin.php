@@ -16,6 +16,9 @@ class Setup_Admin {
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue' ) );
 	}
 
+	/**
+	 * Register the plugin settings page.
+	 */
 	public function register_options_page() {
 		$page_title = esc_html__( 'Social Login', 'vip-social-login' );
 		$capability = 'manage_options';
@@ -25,6 +28,10 @@ class Setup_Admin {
 		add_options_page( $page_title, $page_title, $capability, $slug, $function );
 	}
 
+	/**
+	 * Enqueue css and js files.
+	 * Expose translation to JS file.
+	 */
 	public function enqueue() {
 		wp_enqueue_style(
 			VIP_SOCIAL_LOGIN_SLUG,

@@ -42,7 +42,6 @@ define( 'VIP_SOCIAL_LOGIN_SLUG', 'vip-social-login' );
 define( 'VIP_SOCIAL_LOGIN_URL', plugin_dir_url( __FILE__ ) );
 define( 'VIP_SOCIAL_LOGIN_PATH', plugin_dir_path( __FILE__ ) );
 define( 'VIP_SOCIAL_LOGIN_TEMPLATE_PATH', plugin_dir_path( __FILE__ ) . 'views/' );
-define( 'VIP_SOCIAL_LOGIN_HELP', plugin_dir_path( __FILE__ ) . 'views/' );
 
 /**
 * Ensure compatible version of PHP is used
@@ -65,7 +64,7 @@ if ( version_compare( get_bloginfo( 'version' ), VIP_SOCIAL_LOGIN_MIN_WP_VERSION
  */
 $autoload = plugin_dir_path( __FILE__ ) . '/vendor/autoload.php';
 if ( ! file_exists( $autoload ) ) {
-	wp_die( esc_html__( 'You appear to be running a development version of this plugin. You must run <code>composer install</code> from the plugin dev directory.', 'vip-social-login' ) );
+	wp_die( esc_html__( 'You appear to be running a development version of this plugin. You must run composer install from the plugin dev directory.', 'vip-social-login' ) );
 }
 require_once $autoload;
 

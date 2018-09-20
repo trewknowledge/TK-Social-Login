@@ -6,7 +6,7 @@
 			<?php if ( $active ): ?>
 				<?php $uid = get_user_meta( get_the_ID(), "vip_social_login_{$provider}_uid", true ); ?>
 				<li>
-					<?php TK\Social_Login\Providers::login_button( $provider, false ); ?>
+					<?php TK\Social_Login\Providers::login_button( $provider ); ?>
 				</li>
 			<?php endif ?>
 		<?php endforeach ?>
