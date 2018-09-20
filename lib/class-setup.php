@@ -23,11 +23,13 @@ class Setup {
 			true
 		);
 
-		wp_localize_script( VIP_SOCIAL_LOGIN_SLUG, 'VSL', array(
-			'admin_ajax' => admin_url( 'admin-ajax.php' ),
-			'current_user_id' => get_current_user_id(),
-			'nonce' => wp_create_nonce( 'vsl_action' ),
-		) );
+		wp_localize_script(
+			VIP_SOCIAL_LOGIN_SLUG, 'VSL', array(
+				'admin_ajax'      => admin_url( 'admin-ajax.php' ),
+				'current_user_id' => get_current_user_id(),
+				'nonce'           => wp_create_nonce( 'vsl_action' ),
+			)
+		);
 	}
 
 	public function disconnect_network() {
@@ -35,10 +37,10 @@ class Setup {
 			wp_send_json_error();
 		}
 
-		$user_id = absint( $_POST['user_id'] );
+		$user_id  = absint( $_POST['user_id'] );
 		$provider = sanitize_text_field( wp_unslash( $_POST['provider'] ) );
 
-		delete_user_meta( $user_id, "vip_social_login_{$provider}_uid" );
+		delete_user_attribute( $user_id, "vip_social_login_{$provider}_uid" );
 
 		wp_send_json_success();
 	}
@@ -54,7 +56,7 @@ class Setup {
 		if ( ! username_exists( $new_username ) ) {
 			return $new_username;
 		} else {
-			return self::generate_unique_username( $username, ++$i);
+			return self::generate_unique_username( $username, ++$i );
 		}
 	}
 
@@ -66,7 +68,7 @@ class Setup {
 		}
 
 		$new_email = explode( '@', $email );
-		$new_email = sprintf( '%s-%s@%s', $new_email[0], rand(), $new_email[1] );
+		$new_email = sprintf( '%s-%s@%s', $new_email[0], wp_rand(), $new_email[1] );
 		if ( ! email_exists( $new_email ) ) {
 			return $new_email;
 		} else {
@@ -81,8 +83,9 @@ class Setup {
 		$meta_key = "vip_social_login_{$provider}_uid";
 
 		if ( ! is_user_logged_in() ) {
-			$user_id = $wpdb->get_var( $wpdb->prepare(
-				"
+			$user_id = $wpdb->get_var(
+				$wpdb->prepare(
+					"
 				SELECT user.ID
 				FROM $wpdb->users user
 				INNER JOIN $wpdb->usermeta umeta
@@ -90,9 +93,10 @@ class Setup {
 				WHERE umeta.meta_key = %s
 					AND umeta.meta_value = %s
 				",
-				$meta_key,
-				$uid
-			) );
+					$meta_key,
+					$uid
+				)
+			);
 
 			// Search for uid in the DB. If found, log in.
 
@@ -112,12 +116,13 @@ class Setup {
 			$auth_secure_cookie = $secure_cookie;
 			wp_set_auth_cookie( $user_id, true, $secure_cookie );
 
-			echo "<script>window.close();window.opener.location.reload();</script>";
+			echo '<script>window.close();window.opener.location.reload();</script>';
 			exit;
 
 		} else {
-			$found_id = $wpdb->get_var( $wpdb->prepare(
-				"
+			$found_id = $wpdb->get_var(
+				$wpdb->prepare(
+					"
 				SELECT user.ID
 				FROM $wpdb->users user
 				INNER JOIN $wpdb->usermeta umeta
@@ -125,19 +130,19 @@ class Setup {
 				WHERE umeta.meta_key = %s
 					AND umeta.meta_value = %s
 				",
-				$meta_key,
-				$uid
-			) );
+					$meta_key,
+					$uid
+				)
+			);
 
 			if ( ! $found_id ) {
 				$user_id = get_current_user_id();
-				update_user_meta( $user_id, "vip_social_login_{$provider}_uid", $uid );
+				update_user_attribute( $user_id, "vip_social_login_{$provider}_uid", $uid );
 			} else {
-				$error = urlencode( 'This provider is already associated with another user ' . $found_id );
 				echo "<script>window.close();window.opener.location.href = window.opener.location.href.replace( /[\?#].*|$/, '?vsl_error=100001' );</script>";
 				exit;
 			}
-			echo "<script>window.close();window.opener.location.reload();</script>";
+			echo '<script>window.close();window.opener.location.reload();</script>';
 			exit;
 		}
 	}
@@ -161,7 +166,7 @@ class Setup {
 		$password = wp_generate_password();
 
 		if ( ! $email ) {
-			$host = wp_parse_url( home_url() );
+			$host  = wp_parse_url( home_url() );
 			$email = $provider . '_user@' . $host['host'];
 			$email = self::generate_unique_email( $provider . '_user@' . $host['host'] );
 		}
@@ -195,35 +200,37 @@ class Setup {
 					return;
 				}
 
-				$fb = new \Facebook\Facebook( array(
-					'app_id' => $app_id, // Replace {app-id} with your app id
-					'app_secret' => $secret,
-				) );
+				$fb = new \Facebook\Facebook(
+					array(
+						'app_id'     => $app_id, // Replace {app-id} with your app id
+						'app_secret' => $secret,
+					)
+				);
 
 				$helper = $fb->getRedirectLoginHelper();
 				if ( isset( $_GET['state'] ) ) {
-					$helper->getPersistentDataHandler()->set( 'state', $_GET['state'] );
+					$helper->getPersistentDataHandler()->set( 'state', sanitize_text_field( wp_unslash( $_GET['state'] ) ) );
 				}
 
 				try {
 					$access_token = $helper->getAccessToken();
-				} catch( \Facebook\Exceptions\FacebookResponseException $e ) {
+				} catch ( \Facebook\Exceptions\FacebookResponseException $e ) {
 					// When Graph returns an error
-					echo 'Graph returned an error: ' . $e->getMessage();
+					echo 'Graph returned an error: ' . esc_html( $e->getMessage() );
 					exit;
-				} catch( \Facebook\Exceptions\FacebookSDKException $e ) {
+				} catch ( \Facebook\Exceptions\FacebookSDKException $e ) {
 					// When validation fails or other local issues
-					echo 'Facebook SDK returned an error: ' . $e->getMessage();
+					echo 'Facebook SDK returned an error: ' . esc_html( $e->getMessage() );
 					exit;
 				}
 
 				if ( ! isset( $access_token ) ) {
 					if ( $helper->getError() ) {
 						header( 'HTTP/1.0 401 Unauthorized' );
-						echo "Error: " . $helper->getError() . "\n";
-						echo "Error Code: " . $helper->getErrorCode() . "\n";
-						echo "Error Reason: " . $helper->getErrorReason() . "\n";
-						echo "Error Description: " . $helper->getErrorDescription() . "\n";
+						echo 'Error: ' . esc_html( $helper->getError() ) . "\n";
+						echo 'Error Code: ' . esc_html( helper->getErrorCode() ) . "\n";
+						echo 'Error Reason: ' . esc_html( $helper->getErrorReason() ) . "\n";
+						echo 'Error Description: ' . esc_html( $helper->getErrorDescription() ) . "\n";
 					} else {
 						header( 'HTTP/1.0 400 Bad Request' );
 						echo 'Bad request';
@@ -246,23 +253,23 @@ class Setup {
 					try {
 						$access_token = $oauth2client->getLongLivedAccessToken( $access_token );
 					} catch ( \Facebook\Exceptions\FacebookSDKException $e ) {
-						echo "<p>Error getting long-lived access token: " . $e->getMessage() . "</p>\n\n";
+						echo '<p>Error getting long-lived access token: ' . esc_html( $e->getMessage() ) . "</p>\n\n";
 						exit;
 					}
 				}
 
 				try {
-				  // Get the \Facebook\GraphNodes\GraphUser object for the current user.
-				  // If you provided a 'default_access_token', the '{access-token}' is optional.
-				  $response = $fb->get( '/me?fields=name,email', $access_token );
-				} catch( \Facebook\Exceptions\FacebookResponseException $e ) {
-				  // When Graph returns an error
-				  echo 'Graph returned an error: ' . $e->getMessage();
-				  exit;
-				} catch( \Facebook\Exceptions\FacebookSDKException $e ) {
-				  // When validation fails or other local issues
-				  echo 'Facebook SDK returned an error: ' . $e->getMessage();
-				  exit;
+					// Get the \Facebook\GraphNodes\GraphUser object for the current user.
+					// If you provided a 'default_access_token', the '{access-token}' is optional.
+					$response = $fb->get( '/me?fields=name,email', $access_token );
+				} catch ( \Facebook\Exceptions\FacebookResponseException $e ) {
+					// When Graph returns an error
+					echo 'Graph returned an error: ' . esc_html( $e->getMessage() );
+					exit;
+				} catch ( \Facebook\Exceptions\FacebookSDKException $e ) {
+					// When validation fails or other local issues
+					echo 'Facebook SDK returned an error: ' . esc_html( $e->getMessage() );
+					exit;
 				}
 
 				$me = $response->getGraphUser();
@@ -272,7 +279,7 @@ class Setup {
 						wp_safe_redirect( wp_login_url() );
 						exit;
 					} else {
-						echo "<script>window.close();window.opener.location.reload();</script>";
+						echo '<script>window.close();window.opener.location.reload();</script>';
 						exit;
 					}
 				}
@@ -280,7 +287,7 @@ class Setup {
 				$this->login_from_provider( $me->getProperty( 'name' ), $me->getProperty( 'email' ), $me->getProperty( 'id' ), $provider );
 				break;
 			case 'twitter':
-				$consumer_key = get_option( 'vip-social-login_twitter_consumer_key', '' );
+				$consumer_key    = get_option( 'vip-social-login_twitter_consumer_key', '' );
 				$consumer_secret = get_option( 'vip-social-login_twitter_consumer_secret', '' );
 
 				if ( ! $consumer_key || ! $consumer_secret || ! isset( $_GET['oauth_verifier'], $_GET['oauth_token'] ) || $_GET['oauth_token'] !== $_SESSION['oauth_token'] ) {
@@ -288,10 +295,10 @@ class Setup {
 				}
 
 				if ( ! $_SESSION['access_token'] ) {
-					$request_token = array();
-					$request_token['oauth_token'] = $_GET['oauth_token'];
-					$tw = new \Abraham\TwitterOAuth\TwitterOAuth( $consumer_key, $consumer_secret, $_SESSION['oauth_token'], $_SESSION['oauth_token_secret'] );
-					$_SESSION['access_token'] = $tw->oauth( 'oauth/access_token', array( 'oauth_verifier' => $_GET['oauth_verifier'] ) );
+					$request_token                = array();
+					$request_token['oauth_token'] = sanitize_text_field( wp_unslash( $_GET['oauth_token'] ) );
+					$tw                           = new \Abraham\TwitterOAuth\TwitterOAuth( $consumer_key, $consumer_secret, $_SESSION['oauth_token'], $_SESSION['oauth_token_secret'] );
+					$_SESSION['access_token']     = $tw->oauth( 'oauth/access_token', array( 'oauth_verifier' => sanitize_text_field( wp_unslash( $_GET['oauth_verifier'] ) ) ) );
 				}
 
 				$tw = new \Abraham\TwitterOAuth\TwitterOAuth( $consumer_key, $consumer_secret, $_SESSION['access_token']['oauth_token'], $_SESSION['access_token']['oauth_token_secret'] );
@@ -303,7 +310,7 @@ class Setup {
 						wp_safe_redirect( wp_login_url() );
 						exit;
 					} else {
-						echo "<script>window.close();window.opener.location.reload();</script>";
+						echo '<script>window.close();window.opener.location.reload();</script>';
 						exit;
 					}
 				}
@@ -311,13 +318,12 @@ class Setup {
 				$this->login_from_provider( $user->screen_name, $user->email, $user->id, $provider );
 				break;
 			case 'google':
-				$client_id = get_option( 'vip-social-login_google_client_id', '' );
+				$client_id     = get_option( 'vip-social-login_google_client_id', '' );
 				$client_secret = get_option( 'vip-social-login_google_client_secret', '' );
 
 				if ( ! $client_id || ! $client_secret || ! isset( $_GET['code'] ) ) {
 					return;
 				}
-
 
 				$google = new \Google_Client();
 				$google->setClientId( $client_id );
@@ -326,17 +332,17 @@ class Setup {
 				$google->setRedirectUri( wp_login_url() . '?vip_social_login_provider=google' );
 				$google->addScope( 'https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/plus.me' );
 
-				$token = $google->fetchAccessTokenWithAuthCode( $_GET['code'] );
+				$token = $google->fetchAccessTokenWithAuthCode( sanitize_text_field( wp_unslash( $_GET['code'] ) ) );
 
 				$oauth = new \Google_Service_Oauth2( $google );
-				$user = $oauth->userinfo_v2_me->get();
+				$user  = $oauth->userinfo_v2_me->get();
 
 				if ( ! $user->id ) {
 					if ( ! is_user_logged_in() ) {
 						wp_safe_redirect( wp_login_url() );
 						exit;
 					} else {
-						echo "<script>window.close();window.opener.location.reload();</script>";
+						echo '<script>window.close();window.opener.location.reload();</script>';
 						exit;
 					}
 				}

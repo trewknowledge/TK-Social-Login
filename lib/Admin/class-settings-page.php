@@ -41,7 +41,7 @@ class Settings_Page {
 
 		$providers = get_option( 'vip-social-login-providers', array() );
 
-		$providers[ $_POST['provider'] ] = $_POST['checked'];
+		$providers[ sanitize_text_field( wp_unslash( $_POST['provider'] ) ) ] = boolval( $_POST['checked'] );
 
 		update_option( 'vip-social-login-providers', $providers );
 
@@ -60,9 +60,9 @@ class Settings_Page {
 	}
 
 	public function render_settings_page() {
-		$view = isset( $_GET['view'] ) ? esc_html( $_GET['view'] ) : 'providers';
-		$subview = isset( $_GET['subview'] ) ? esc_html( $_GET['subview'] ) : '';
-		$tab = isset( $_GET['tab'] ) ? esc_html( $_GET['tab'] ) : '';
+		$view = isset( $_GET['view'] ) ? sanitize_text_field( wp_unslash( $_GET['view'] ) ) : 'providers';
+		$subview = isset( $_GET['subview'] ) ? sanitize_text_field( wp_unslash( $_GET['subview'] ) ) : '';
+		$tab = isset( $_GET['tab'] ) ? sanitize_text_field( wp_unslash( $_GET['tab'] ) ) : '';
 		include( VIP_SOCIAL_LOGIN_TEMPLATE_PATH . 'settings/header.php' );
 		$this->render_contents( $view, $subview, $tab );
 		include( VIP_SOCIAL_LOGIN_TEMPLATE_PATH . 'settings/footer.php' );

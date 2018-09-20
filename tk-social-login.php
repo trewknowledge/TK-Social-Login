@@ -38,55 +38,46 @@ if ( ! defined( 'WPINC' ) ) {
 define( 'VIP_SOCIAL_LOGIN_VERSION', '1.0.0' );
 define( 'VIP_SOCIAL_LOGIN_MIN_PHP_VERSION', '5.6' );
 define( 'VIP_SOCIAL_LOGIN_MIN_WP_VERSION', '4.3' );
-define( 'VIP_SOCIAL_LOGIN_SLUG', 'vip-social-login');
+define( 'VIP_SOCIAL_LOGIN_SLUG', 'vip-social-login' );
 define( 'VIP_SOCIAL_LOGIN_URL', plugin_dir_url( __FILE__ ) );
 define( 'VIP_SOCIAL_LOGIN_PATH', plugin_dir_path( __FILE__ ) );
 define( 'VIP_SOCIAL_LOGIN_TEMPLATE_PATH', plugin_dir_path( __FILE__ ) . 'views/' );
 define( 'VIP_SOCIAL_LOGIN_HELP', plugin_dir_path( __FILE__ ) . 'views/' );
 
-$vip_social_login_error = function( $message, $subtitle = '', $title = '' ) {
-	$title = $title ?: esc_html__( 'TK Social Login &rsaquo; Error', 'vip-social-login' );
-	$message = "<h1>{$title}<br><small>{$subtitle}</small></h1><p>{$message}</p>";
-	wp_die( $message, $title );
-};
-
 /**
 * Ensure compatible version of PHP is used
 */
 if ( version_compare( phpversion(), VIP_SOCIAL_LOGIN_MIN_PHP_VERSION, '<' ) ) {
-	$vip_social_login_error(
-			esc_html__( 'You must be using PHP ' . VIP_SOCIAL_LOGIN_MIN_PHP_VERSION . ' or greater.', 'vip-social-login' ),
-			esc_html__( 'Invalid PHP version', 'vip-social-login' )
-	);
+	/* translators: Minimum PHP Version */
+	wp_die( sprintf( esc_html__( 'You must be using PHP %s or greater.', 'vip-social-login' ), esc_html( VIP_SOCIAL_LOGIN_MIN_PHP_VERSION ) );
 }
 
 /**
 * Ensure compatible version of WordPress is used
 */
-if ( version_compare( get_bloginfo('version'), VIP_SOCIAL_LOGIN_MIN_WP_VERSION, '<' ) ) {
-	$vip_social_login_error(
-			esc_html__( 'You must be using WordPress ' . VIP_SOCIAL_LOGIN_MIN_WP_VERSION .  ' or greater.', 'vip-social-login' ),
-			esc_html__( 'Invalid WordPress version', 'vip-social-login' )
-	);
+if ( version_compare( get_bloginfo( 'version' ), VIP_SOCIAL_LOGIN_MIN_WP_VERSION, '<' ) ) {
+	/* translators: Minimum WP Version */
+	wp_die( sprintf( esc_html__( 'You must be using WordPress %s or greater.', 'vip-social-login' ), esc_html( VIP_SOCIAL_LOGIN_MIN_WP_VERSION ) );
 }
 
 /**
  * Load dependencies
  */
-$autoload = __DIR__ . '/vendor/autoload.php';
+$autoload = plugin_dir_path( __FILE__ ) . '/vendor/autoload.php';
 if ( ! file_exists( $autoload ) ) {
-	$vip_social_login_error(
-		esc_html__( 'You appear to be running a development version of this plugin. You must run <code>composer install</code> from the plugin dev directory.', 'vip-social-login' ),
-		esc_html__( 'Autoloader not found.', 'vip-social-login' )
-	);
+	wp_die( esc_html__( 'You appear to be running a development version of this plugin. You must run <code>composer install</code> from the plugin dev directory.', 'vip-social-login' ) );
 }
 require_once $autoload;
 
-register_activation_hook( __FILE__, function() {
+register_activation_hook(
+	__FILE__, function() {
 
-} );
-register_deactivation_hook( __FILE__, function() {
+	}
+);
+register_deactivation_hook(
+	__FILE__, function() {
 
-} );
+	}
+);
 
-require_once('bootstrap.php');
+require_once( plugin_dir_path( __FILE__ ) . '/bootstrap.php' );

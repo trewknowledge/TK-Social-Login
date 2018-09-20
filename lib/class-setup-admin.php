@@ -13,7 +13,6 @@ class Setup_Admin {
 	protected function setup() {
 		// Register the main options page
 		add_action( 'admin_menu', array( $this, 'register_options_page' ) );
-		// add_action( 'admin_init', array( $this->settings_page, 'init' ) );
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue' ) );
 	}
 

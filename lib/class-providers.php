@@ -78,7 +78,7 @@ class Providers {
 					return;
 				}
 
-				$login_url = 'https://accounts.google.com/o/oauth2/v2/auth?scope=' . urlencode('https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/plus.me') . '&redirect_uri=' . urlencode( $callback_url ) . '&response_type=code&client_id=' . $client_id . '&access_type=online';
+				$login_url = 'https://accounts.google.com/o/oauth2/v2/auth?scope=' . rawurlencode('https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/plus.me') . '&redirect_uri=' . urlencode( $callback_url ) . '&response_type=code&client_id=' . $client_id . '&access_type=online';
 
 				if ( ! is_user_logged_in() ) {
 					$button_text = get_option( 'vip-social-login_google_button_text', esc_html_x( 'Log in with Google', 'Login Button', 'vip-social-login') );
@@ -88,7 +88,7 @@ class Providers {
 				break;
 		}
 
-		echo '<a href="' . $login_url . '" class="' . ( $uid ? 'vsl-connected' : 'vsl-provider' ) . '" data-provider="' . $provider . '">' . $button_text . '</a>';
+		echo '<a href="' . esc_url( $login_url ) . '" class="' . ( $uid ? 'vsl-connected' : 'vsl-provider' ) . '" data-provider="' . esc_attr( $provider ) . '">' . esc_html( $button_text ) . '</a>';
 	}
 
 	public function get_connected_networks() {

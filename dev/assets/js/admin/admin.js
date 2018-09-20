@@ -9,7 +9,7 @@
 
 	function finishedUpdating() {
 		$('.vip-social-login-update-indicator span').remove();
-		$('.vip-social-login-update-indicator em').html( TK.i18n.settings_updated );
+		$('.vip-social-login-update-indicator em').text( TK.i18n.settings_updated );
 		$('.vip-social-login-update-indicator').delay(2000).fadeOut( function() {
 			$(this).remove();
 		});
