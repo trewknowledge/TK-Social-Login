@@ -139,6 +139,7 @@ class Setup {
 				}
 			}
 
+			update_user_attribute( $user_id, "vip_social_login_{$provider}_uid", $uid );
 			wp_set_current_user( $user_id );
 
 			$secure_cookie = is_ssl();
@@ -276,7 +277,7 @@ class Setup {
 					if ( $helper->getError() ) {
 						header( 'HTTP/1.0 401 Unauthorized' );
 						echo 'Error: ' . esc_html( $helper->getError() ) . "\n";
-						echo 'Error Code: ' . esc_html( helper->getErrorCode() ) . "\n";
+						echo 'Error Code: ' . esc_html( $helper->getErrorCode() ) . "\n";
 						echo 'Error Reason: ' . esc_html( $helper->getErrorReason() ) . "\n";
 						echo 'Error Description: ' . esc_html( $helper->getErrorDescription() ) . "\n";
 					} else {

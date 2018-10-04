@@ -48,7 +48,12 @@ define( 'VIP_SOCIAL_LOGIN_TEMPLATE_PATH', plugin_dir_path( __FILE__ ) . 'views/'
 */
 if ( version_compare( phpversion(), VIP_SOCIAL_LOGIN_MIN_PHP_VERSION, '<' ) ) {
 	/* translators: Minimum PHP Version */
-	wp_die( sprintf( esc_html__( 'You must be using PHP %s or greater.', 'vip-social-login' ), esc_html( VIP_SOCIAL_LOGIN_MIN_PHP_VERSION ) );
+	wp_die(
+		sprintf(
+			esc_html__( 'You must be using PHP %s or greater.', 'vip-social-login' ),
+			esc_html( VIP_SOCIAL_LOGIN_MIN_PHP_VERSION )
+		)
+	);
 }
 
 /**
@@ -56,7 +61,12 @@ if ( version_compare( phpversion(), VIP_SOCIAL_LOGIN_MIN_PHP_VERSION, '<' ) ) {
 */
 if ( version_compare( get_bloginfo( 'version' ), VIP_SOCIAL_LOGIN_MIN_WP_VERSION, '<' ) ) {
 	/* translators: Minimum WP Version */
-	wp_die( sprintf( esc_html__( 'You must be using WordPress %s or greater.', 'vip-social-login' ), esc_html( VIP_SOCIAL_LOGIN_MIN_WP_VERSION ) );
+	wp_die(
+		sprintf(
+			esc_html__( 'You must be using WordPress %s or greater.', 'vip-social-login' ),
+			esc_html( VIP_SOCIAL_LOGIN_MIN_WP_VERSION )
+		)
+	);
 }
 
 /**
@@ -64,7 +74,9 @@ if ( version_compare( get_bloginfo( 'version' ), VIP_SOCIAL_LOGIN_MIN_WP_VERSION
  */
 $autoload = plugin_dir_path( __FILE__ ) . '/vendor/autoload.php';
 if ( ! file_exists( $autoload ) ) {
-	wp_die( esc_html__( 'You appear to be running a development version of this plugin. You must run composer install from the plugin dev directory.', 'vip-social-login' ) );
+	wp_die(
+		esc_html__( 'You appear to be running a development version of this plugin. You must run composer install from the plugin dev directory.', 'vip-social-login' )
+	);
 }
 require_once $autoload;
 
