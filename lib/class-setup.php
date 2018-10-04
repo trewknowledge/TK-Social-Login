@@ -2,8 +2,6 @@
 
 namespace TK\Social_Login;
 
-session_start();
-
 class Setup {
 	function __construct() {
 		$this->setup();
@@ -11,7 +9,6 @@ class Setup {
 
 	protected function setup() {
 		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_public' ) );
-		add_action( 'login_init', array( $this, 'check_login_provider' ) );
 	}
 
 	/**
@@ -36,6 +33,100 @@ class Setup {
 	}
 
 	/**
+	 * Checks the plugin error code that should be in the url as a get parameter.
+	 * @return string The error message.
+	 */
+	public static function get_error_message() {
+		$code = isset( $_GET['vsl_error'] ) ? absint( $_GET['vsl_error'] ) : false;
+
+		if ( ! $code ) {
+			return;
+		}
+
+		$message = '';
+
+		switch ( $code ) {
+			case 100001:
+				$message = esc_html__( 'This network is already connected to another user.', 'vip-social-login' );
+				break;
+			case 100002:
+				$message = esc_html__( 'The network provider is not acceptable.', 'vip-social-login' );
+				break;
+			case 100003:
+				$message = esc_html__( 'The network provider is currently disabled.', 'vip-social-login' );
+				break;
+		}
+
+		return $message;
+	}
+
+	public static function error_message() {
+		echo self::get_error_message();
+	}
+
+	public function connect_network() {
+		if ( ! isset( $_POST['nonce'], $_POST['uid'], $_POST['provider'] ) || ! wp_verify_nonce( sanitize_key( wp_unslash( $_POST['nonce'] ) ), 'vsl_action' ) ) {
+			wp_send_json_error();
+		}
+
+		$providers = get_option( 'vip-social-login-providers', array() );
+		$provider  = sanitize_text_field( wp_unslash( $_POST['provider'] ) );
+		if ( ! in_array( $provider, array_keys( $providers ), true ) ) {
+			$redirect_url = self::get_error_url( 100002 );
+			wp_send_json_error( array( 'redirect' => $redirect_url ) );
+		}
+
+		if ( 'false' === $providers[ $provider ] ) {
+			$redirect_url = self::get_error_url( 100003 );
+			wp_send_json_error( array( 'redirect' => $redirect_url ) );
+		}
+
+		$uid      = sanitize_text_field( wp_unslash( $_POST['uid'] ) );
+		$name     = isset( $_POST['name'] ) && $_POST['name'] ? sanitize_text_field( wp_unslash( $_POST['name'] ) ) : '';
+		$email    = isset( $_POST['email'] ) && $_POST['email'] ? sanitize_email( wp_unslash( $_POST['email'] ) ) : '';
+
+
+		if ( is_user_logged_in() ) {
+			$wp_users = self::is_uid_assigned( $provider, $uid );
+			if ( $wp_users ) {
+				$redirect_url = self::get_error_url( 100001 );
+				wp_send_json_error( array( 'redirect' => $redirect_url ) );
+			}
+
+			update_user_meta( get_current_user_id(), "vip_social_login_{$provider}_uid", $uid );
+			wp_send_json_success();
+		}
+
+		self::login_user( $name, $email, $uid, $provider );
+
+		wp_send_json_success();
+	}
+
+	protected static function get_error_url( $error_code ) {
+		$error_code = absint( $error_code );
+		return add_query_arg(
+			array(
+				'vsl_error' => $error_code,
+			),
+			wp_get_referer()
+		);
+	}
+
+	protected static function is_uid_assigned( $provider, $uid ) {
+		$provider = sanitize_text_field( wp_unslash( $provider ) );
+		$uid      = sanitize_text_field( wp_unslash( $uid ) );
+
+		$meta_key = "vip_social_login_{$provider}_uid";
+
+		$wp_users_query = new \WP_User_Query( array(
+			'meta_key' => $meta_key,
+			'meta_value' => $uid,
+		) );
+
+		return $wp_users_query->get_results();
+	}
+
+	/**
 	 * Disconnect the network from user.
 	 * It removes the network uid from the user_meta (or user_attribute).
 	 */
@@ -50,6 +141,49 @@ class Setup {
 		delete_user_attribute( $user_id, "vip_social_login_{$provider}_uid" );
 
 		wp_send_json_success();
+	}
+
+	/**
+	 * Check if we can find a user based on the UID.
+	 * We look into the database to see if we can find a user that has
+	 * the provided UID as a user_meta (or attribute).
+	 * If a user is not found, we check by the email.
+	 * If we still can't find a user, we create one.
+	 * We assign the UID to that user and log them in.
+	 * @param  string $name     The name provided by the network.
+	 * @param  string $email    The email.
+	 * @param  string $uid      The social network UID.
+	 * @param  string $provider The social network name. E.g. google, facebook.
+	 */
+	protected static function login_user( $name, $email, $uid, $provider ) {
+		$name     = sanitize_text_field( wp_unslash( $name ) );
+		$email    = sanitize_email( wp_unslash( $email ) );
+		$uid      = sanitize_text_field( wp_unslash( $uid ) );
+		$provider = sanitize_text_field( wp_unslash( $provider ) );
+
+		$user_id  = false;
+
+		$wp_users = self::is_uid_assigned( $provider, $uid );
+		if ( $wp_users ) {
+			$user_id = $wp_users[0]->ID;
+		}
+
+		if ( ! $user_id ) {
+			$user_id = email_exists( $email );
+			if ( ! $user_id ) {
+				$user_id = self::create_user_from_provider( $name, $email ?: '', $provider );
+			}
+		}
+		update_user_meta( $user_id, "vip_social_login_{$provider}_uid", $uid );
+
+		wp_set_current_user( $user_id );
+
+		$secure_cookie = is_ssl();
+		$secure_cookie = apply_filters( 'secure_signon_cookie', $secure_cookie, array() );
+		global $auth_secure_cookie; // XXX ugly hack to pass this to wp_authenticate_cookie
+
+		$auth_secure_cookie = $secure_cookie;
+		wp_set_auth_cookie( $user_id, true, $secure_cookie );
 	}
 
 	/**
@@ -98,114 +232,13 @@ class Setup {
 	}
 
 	/**
-	 * Check if we can find a user based on the UID.
-	 * We look into the database to see if we can find a user that has
-	 * the provided UID as a user_meta (or attribute).
-	 * If the user is not logged in we log them in too.
-	 * It's kinda hacky, but it works.
-	 * @param  string $name     The name provided by the network.
-	 * @param  string $email    The email.
-	 * @param  string $uid      The social network UID.
-	 * @param  string $provider The social network name. E.g. google, facebook.
-	 */
-	protected function login_from_provider( $name, $email, $uid, $provider ) {
-
-		global $wpdb;
-
-		$meta_key = "vip_social_login_{$provider}_uid";
-
-		if ( ! is_user_logged_in() ) {
-			$user_id = $wpdb->get_var(
-				$wpdb->prepare(
-					"
-				SELECT user.ID
-				FROM $wpdb->users user
-				INNER JOIN $wpdb->usermeta umeta
-					ON user.ID = umeta.user_id
-				WHERE umeta.meta_key = %s
-					AND umeta.meta_value = %s
-				",
-					$meta_key,
-					$uid
-				)
-			);
-
-			// Search for uid in the DB. If found, log in.
-
-			if ( ! $user_id ) {
-				$user_id = email_exists( $email );
-				if ( ! $user_id ) {
-					$user_id = $this->create_user_from_provider( $name, $email ?: '', $provider );
-				}
-			}
-
-			update_user_attribute( $user_id, "vip_social_login_{$provider}_uid", $uid );
-			wp_set_current_user( $user_id );
-
-			$secure_cookie = is_ssl();
-			$secure_cookie = apply_filters( 'secure_signon_cookie', $secure_cookie, array() );
-			global $auth_secure_cookie; // XXX ugly hack to pass this to wp_authenticate_cookie
-
-			$auth_secure_cookie = $secure_cookie;
-			wp_set_auth_cookie( $user_id, true, $secure_cookie );
-
-			echo '<script>window.close();window.opener.location.reload();</script>';
-			exit;
-
-		} else {
-			$found_id = $wpdb->get_var(
-				$wpdb->prepare(
-					"
-				SELECT user.ID
-				FROM $wpdb->users user
-				INNER JOIN $wpdb->usermeta umeta
-					ON user.ID = umeta.user_id
-				WHERE umeta.meta_key = %s
-					AND umeta.meta_value = %s
-				",
-					$meta_key,
-					$uid
-				)
-			);
-
-			if ( ! $found_id ) {
-				$user_id = get_current_user_id();
-				update_user_attribute( $user_id, "vip_social_login_{$provider}_uid", $uid );
-			} else {
-				echo "<script>window.close();window.opener.location.href = window.opener.location.href.replace( /[\?#].*|$/, '?vsl_error=100001' );</script>";
-				exit;
-			}
-			echo '<script>window.close();window.opener.location.reload();</script>';
-			exit;
-		}
-	}
-
-	/**
-	 * Checks the plugin error code that should be in the url as a get parameter.
-	 * @return string The error message.
-	 */
-	public function error_message() {
-		$code = isset( $_GET['vsl_error'] ) ? absint( $_GET['vsl_error'] ) : false;
-
-		if ( ! $code ) {
-			return;
-		}
-
-		switch ( $code ) {
-			case '100001':
-				esc_html_e( 'This network is already connected to another user.', 'vip-social-login' );
-				break;
-		}
-	}
-
-	/**
 	 * Creates a new user based on a provider.
 	 * @param  string $name     The name of the user.
 	 * @param  string $email    The email.
 	 * @param  string $provider The social network name. E.g. google, facebook.
 	 * @return WP_User          The new user object.
 	 */
-	protected function create_user_from_provider( $name, $email, $provider ) {
+	protected static function create_user_from_provider( $name, $email, $provider ) {
 		$username = self::generate_unique_username( $name );
 		$password = wp_generate_password();
 

@@ -2,8 +2,6 @@
 
 namespace TK\Social_Login;
 
-session_start();
-
 class Providers {
 
 	/**
@@ -38,15 +36,15 @@ class Providers {
 					return;
 				}
 
-				$fb = new \Facebook\Facebook( array(
-					'app_id'                => $app_id,
-					'app_secret'            => $secret,
-				) );
+				// $fb = new \Facebook\Facebook( array(
+				// 	'app_id'                => $app_id,
+				// 	'app_secret'            => $secret,
+				// ) );
 
-				$helper = $fb->getRedirectLoginHelper();
+				// $helper = $fb->getRedirectLoginHelper();
 
-				$permissions = array( 'email', 'public_profile', 'user_birthday' ); // Optional permissions
-				$login_url = $helper->getLoginUrl( $callback_url, $permissions );
+				// $permissions = array( 'email', 'public_profile', 'user_birthday' ); // Optional permissions
+				// $login_url = $helper->getLoginUrl( $callback_url, $permissions );
 				if ( ! is_user_logged_in() ) {
 					$button_text = get_option( 'vip-social-login_facebook_button_text', esc_html_x( 'Log in with Facebook', 'Login Button', 'vip-social-login') );
 					$button_text = apply_filters( 'vip_social_login/providers/facebook/button_text', $button_text );
@@ -93,7 +91,8 @@ class Providers {
 				break;
 		}
 
-		echo '<a href="' . esc_url( $login_url ) . '" class="' . ( $uid ? 'vsl-connected' : 'vsl-provider' ) . '" data-provider="' . esc_attr( $provider ) . '">' . esc_html( $button_text ) . '</a>';
+		// echo '<a href="' . esc_url( $login_url ) . '" class="' . ( $uid ? 'vsl-connected' : 'vsl-provider' ) . '" data-provider="' . esc_attr( $provider ) . '">' . esc_html( $button_text ) . '</a>';
+		echo '<button class="' . ( $uid ? 'vsl-connected' : 'vsl-provider' ) . '" data-provider="' . esc_attr( $provider ) . '">' . esc_html( $button_text ) . '</button>';
 	}
 
 	/**

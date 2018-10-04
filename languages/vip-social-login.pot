@@ -13,54 +13,43 @@ msgstr ""
 "X-Poedit-SourceCharset: UTF-8\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: ../tk-social-login.php:48
-msgid "TK Social Login &rsaquo; Error"
+#: ../tk-social-login.php:53
+msgid "You must be using PHP %s or greater."
 msgstr ""
 
-#: ../tk-social-login.php:58, ../tk-social-login.php:68
+#: ../tk-social-login.php:66
+msgid "You must be using WordPress %s or greater."
 msgstr ""
 
-#: ../tk-social-login.php:59
-msgid "Invalid PHP version"
+#: ../tk-social-login.php:78
+msgid "You appear to be running a development version of this plugin. You must run composer install from the plugin dev directory."
 msgstr ""
 
-#: ../tk-social-login.php:69
-msgid "Invalid WordPress version"
-msgstr ""
-
-#: ../tk-social-login.php:79
-msgid "You appear to be running a development version of this plugin. You must run <code>composer install</code> from the plugin dev directory."
-msgstr ""
-
-#: ../tk-social-login.php:80
-msgid "Autoloader not found."
-msgstr ""
-
-#: ../lib/class-providers.php:46
+#: ../lib/class-providers.php:51
 msgctxt "Login Button"
 msgid "Log in with Facebook"
 msgstr ""
 
-#: ../lib/class-providers.php:68
+#: ../lib/class-providers.php:73
 msgctxt "Login Button"
-msgid "Log in with twitter"
+msgid "Log in with Twitter"
 msgstr ""
 
-#: ../lib/class-providers.php:84
+#: ../lib/class-providers.php:89
 msgctxt "Login Button"
 msgid "Log in with Google"
 msgstr ""
 
-#: ../lib/class-setup-admin.php:21
+#: ../lib/class-setup-admin.php:23
 msgid "Social Login"
 msgstr ""
 
-#: ../lib/class-setup-admin.php:50
+#: ../lib/class-setup-admin.php:56
 msgctxt "Admin loading indicator"
 msgid "Settings Updated"
 msgstr ""
 
-#: ../lib/class-setup.php:135
+#: ../lib/class-setup.php:196
 msgid "This network is already connected to another user."
 msgstr ""
 
@@ -68,12 +57,6 @@ msgstr ""
 #: ../views/settings/footer.php:9
 msgctxt "Admin Settings Page Footer"
 msgid "Trew Knowledge Social Login. Built with &#9829; by %1$sTrew Knowledge%2$s."
-msgstr ""
-
-#. translators: 1. Link to donation page 2.Closing </a> tag 3. Link to plugin review page
-#: ../views/settings/footer.php:18
-msgctxt "Admin Settings Page Footer"
-msgid "Support our development efforts! %1$sDonate%2$s or leave a %3$s5-star rating%2$s."
 msgstr ""
 
 #: ../views/settings/header.php:3
