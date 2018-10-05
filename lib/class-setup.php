@@ -9,6 +9,7 @@ class Setup {
 
 	protected function setup() {
 		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_public' ) );
+		add_action( 'login_init', array( $this, 'check_login_provider' ) );
 	}
 
 	/**
@@ -253,8 +254,6 @@ class Setup {
 
 	/**
 	 * Check the provider that is being used and process the login accordingly.
-	 * We use SESSIONS to handle parts of it because it's necessary.
-	 * Facebook and others need to pass access tokens to other pages. We use SESSIONS for that.
 	 */
 	public function check_login_provider() {
 		if ( ! isset( $_GET['vip_social_login_provider'] ) ) {
@@ -262,6 +261,10 @@ class Setup {
 		}
 
 		$provider = sanitize_key( $_GET['vip_social_login_provider'] );
+
+		if ( 'facebook' === $provider ) {
+			return;
+		}
 
 		$providers = get_option( 'vip-social-login-providers', array() );
 
@@ -274,116 +277,17 @@ class Setup {
 		}
 
 		switch ( $provider ) {
-			case 'facebook':
-				$app_id = get_option( 'vip-social-login_facebook_app_id', '' );
-				$secret = get_option( 'vip-social-login_facebook_app_secret', '' );
-
-				if ( ! $app_id || ! $secret ) {
-					return;
-				}
-
-				$fb = new \Facebook\Facebook(
-					array(
-						'app_id'     => $app_id, // Replace {app-id} with your app id
-						'app_secret' => $secret,
-					)
-				);
-
-				$helper = $fb->getRedirectLoginHelper();
-				if ( isset( $_GET['state'] ) ) {
-					$helper->getPersistentDataHandler()->set( 'state', sanitize_text_field( wp_unslash( $_GET['state'] ) ) );
-				}
-
-				try {
-					$access_token = $helper->getAccessToken();
-				} catch ( \Facebook\Exceptions\FacebookResponseException $e ) {
-					// When Graph returns an error
-					echo 'Graph returned an error: ' . esc_html( $e->getMessage() );
-					exit;
-				} catch ( \Facebook\Exceptions\FacebookSDKException $e ) {
-					// When validation fails or other local issues
-					echo 'Facebook SDK returned an error: ' . esc_html( $e->getMessage() );
-					exit;
-				}
-
-				if ( ! isset( $access_token ) ) {
-					if ( $helper->getError() ) {
-						header( 'HTTP/1.0 401 Unauthorized' );
-						echo 'Error: ' . esc_html( $helper->getError() ) . "\n";
-						echo 'Error Code: ' . esc_html( $helper->getErrorCode() ) . "\n";
-						echo 'Error Reason: ' . esc_html( $helper->getErrorReason() ) . "\n";
-						echo 'Error Description: ' . esc_html( $helper->getErrorDescription() ) . "\n";
-					} else {
-						header( 'HTTP/1.0 400 Bad Request' );
-						echo 'Bad request';
-					}
-					exit;
-				}
-
-				// The OAuth 2.0 client handler helps us manage access tokens
-				$oauth2client = $fb->getOAuth2Client();
-
-				// Get the access token metadata from /debug_token
-				$token_metadata = $oauth2client->debugToken( $access_token );
-
-				// Validation (these will throw FacebookSDKException's when they fail)
-				$token_metadata->validateAppId( $app_id );
-				$token_metadata->validateExpiration();
-
-				if ( ! $access_token->isLongLived() ) {
-					// Exchanges a short-lived access token for a long-lived one
-					try {
-						$access_token = $oauth2client->getLongLivedAccessToken( $access_token );
-					} catch ( \Facebook\Exceptions\FacebookSDKException $e ) {
-						echo '<p>Error getting long-lived access token: ' . esc_html( $e->getMessage() ) . "</p>\n\n";
-						exit;
-					}
-				}
-
-				try {
-					// Get the \Facebook\GraphNodes\GraphUser object for the current user.
-					// If you provided a 'default_access_token', the '{access-token}' is optional.
-					$response = $fb->get( '/me?fields=name,email', $access_token );
-				} catch ( \Facebook\Exceptions\FacebookResponseException $e ) {
-					// When Graph returns an error
-					echo 'Graph returned an error: ' . esc_html( $e->getMessage() );
-					exit;
-				} catch ( \Facebook\Exceptions\FacebookSDKException $e ) {
-					// When validation fails or other local issues
-					echo 'Facebook SDK returned an error: ' . esc_html( $e->getMessage() );
-					exit;
-				}
-
-				$me = $response->getGraphUser();
-
-				if ( ! $me->getProperty( 'id' ) ) {
-					if ( ! is_user_logged_in() ) {
-						wp_safe_redirect( wp_login_url() );
-						exit;
-					} else {
-						echo '<script>window.close();window.opener.location.reload();</script>';
-						exit;
-					}
-				}
-
-				$this->login_from_provider( $me->getProperty( 'name' ), $me->getProperty( 'email' ), $me->getProperty( 'id' ), $provider );
-				break;
 			case 'twitter':
 				$consumer_key    = get_option( 'vip-social-login_twitter_consumer_key', '' );
 				$consumer_secret = get_option( 'vip-social-login_twitter_consumer_secret', '' );
+				$access_token = get_option( 'vip-social-login_twitter_access_token', '' );
+				$access_token_secret = get_option( 'vip-social-login_twitter_access_token_secret', '' );
 
-				if ( ! $consumer_key || ! $consumer_secret || ! isset( $_GET['oauth_verifier'], $_GET['oauth_token'] ) || $_GET['oauth_token'] !== $_SESSION['oauth_token'] ) {
+				if ( ! $consumer_key || ! $consumer_secret || ! $access_token || ! $access_token_secret ) {
 					return;
 				}
 
-				if ( ! $_SESSION['access_token'] ) {
-					$request_token                = array();
-					$request_token['oauth_token'] = sanitize_text_field( wp_unslash( $_GET['oauth_token'] ) );
-					$tw                           = new \Abraham\TwitterOAuth\TwitterOAuth( $consumer_key, $consumer_secret, $_SESSION['oauth_token'], $_SESSION['oauth_token_secret'] );
-					$_SESSION['access_token']     = $tw->oauth( 'oauth/access_token', array( 'oauth_verifier' => sanitize_text_field( wp_unslash( $_GET['oauth_verifier'] ) ) ) );
-				}
-
-				$tw = new \Abraham\TwitterOAuth\TwitterOAuth( $consumer_key, $consumer_secret, $_SESSION['access_token']['oauth_token'], $_SESSION['access_token']['oauth_token_secret'] );
+				$tw = new \Abraham\TwitterOAuth\TwitterOAuth( $consumer_key, $consumer_secret, $access_token, $access_token_secret );
 
 				$user = $tw->get( 'account/verify_credentials', array( 'include_email' => true ) );
 
@@ -396,8 +300,8 @@ class Setup {
 						exit;
 					}
 				}
-
-				$this->login_from_provider( $user->screen_name, $user->email, $user->id, $provider );
+				self::login_user( $user->screen_name, $user->email, $user->id, $provider );
+				echo '<script>window.close();window.opener.location.reload();</script>';
 				break;
 			case 'google':
 				$client_id     = get_option( 'vip-social-login_google_client_id', '' );
@@ -429,7 +333,7 @@ class Setup {
 					}
 				}
 
-				$this->login_from_provider( $user->name, $user->email, $user->id, $provider );
+				self::login_user( $user->name, $user->email, $user->id, $provider );
 				break;
 		}
 	}

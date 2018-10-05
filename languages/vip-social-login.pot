@@ -25,17 +25,17 @@ msgstr ""
 msgid "You appear to be running a development version of this plugin. You must run composer install from the plugin dev directory."
 msgstr ""
 
-#: ../lib/class-providers.php:51
+#: ../lib/class-providers.php:50
 msgctxt "Login Button"
 msgid "Log in with Facebook"
 msgstr ""
 
-#: ../lib/class-providers.php:73
+#: ../lib/class-providers.php:71
 msgctxt "Login Button"
 msgid "Log in with Twitter"
 msgstr ""
 
-#: ../lib/class-providers.php:89
+#: ../lib/class-providers.php:87
 msgctxt "Login Button"
 msgid "Log in with Google"
 msgstr ""
@@ -49,8 +49,16 @@ msgctxt "Admin loading indicator"
 msgid "Settings Updated"
 msgstr ""
 
-#: ../lib/class-setup.php:196
+#: ../lib/class-setup.php:51
 msgid "This network is already connected to another user."
+msgstr ""
+
+#: ../lib/class-setup.php:54
+msgid "The network provider is not acceptable."
+msgstr ""
+
+#: ../lib/class-setup.php:57
+msgid "The network provider is currently disabled."
 msgstr ""
 
 #. translators: 1. Link to VIP website 2.Closing </a> tag 3.
@@ -370,4 +378,14 @@ msgstr ""
 #: ../views/settings/providers/twitter/settings.php:17
 msgctxt "Admin(Twitter) - Settings"
 msgid "Consumer Secret"
+msgstr ""
+
+#: ../views/settings/providers/twitter/settings.php:26
+msgctxt "Admin(Twitter) - Settings"
+msgid "Access Token"
+msgstr ""
+
+#: ../views/settings/providers/twitter/settings.php:35
+msgctxt "Admin(Twitter) - Settings"
+msgid "Access Token Secret"
 msgstr ""

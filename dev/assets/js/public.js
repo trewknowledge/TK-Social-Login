@@ -49,8 +49,6 @@
 		}
 		$('.vsl-provider').on( 'click', function( e ) {
 			e.preventDefault();
-			// var url = $(this).attr('href');
-			// window.open( url, 'popUpWindow', 'height=410,width=620,left=10,top=10,resizable=yes,scrollbars=yes,toolbar=yes,menubar=no,location=no,directories=no,status=yes');
 			var provider = $(this).data('provider');
 
 			switch(provider) {
@@ -71,6 +69,10 @@
 							});
 						}
 					}, {scope: 'public_profile,email,user_birthday'});
+					break;
+				default:
+					var url = $(this).attr('href');
+					window.open( url, 'popUpWindow', 'height=410,width=620,left=10,top=10,resizable=yes,scrollbars=yes,toolbar=yes,menubar=no,location=no,directories=no,status=yes');
 					break;
 			}
 		});

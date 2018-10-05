@@ -45,6 +45,7 @@ class Providers {
 
 				// $permissions = array( 'email', 'public_profile', 'user_birthday' ); // Optional permissions
 				// $login_url = $helper->getLoginUrl( $callback_url, $permissions );
+				$login_url = '';
 				if ( ! is_user_logged_in() ) {
 					$button_text = get_option( 'vip-social-login_facebook_button_text', esc_html_x( 'Log in with Facebook', 'Login Button', 'vip-social-login') );
 					$button_text = apply_filters( 'vip_social_login/providers/facebook/button_text', $button_text );
@@ -62,10 +63,9 @@ class Providers {
 				$tw = new \Abraham\TwitterOAuth\TwitterOAuth( $consumer_key, $consumer_secret );
 
 				$request_token = $tw->oauth( 'oauth/request_token', array( 'oauth_callback' => $callback_url ) );
-				$_SESSION['oauth_token'] = $request_token['oauth_token'];
-				$_SESSION['oauth_token_secret'] = $request_token['oauth_token_secret'];
+				$oauth_token = $request_token['oauth_token'];
 
-				$login_url = $tw->url( 'oauth/authenticate', array( 'oauth_token' => $request_token['oauth_token'] ) );
+				$login_url = $tw->url( 'oauth/authenticate', array( 'oauth_token' => $oauth_token ) );
 
 				if ( ! is_user_logged_in() ) {
 					$button_text = get_option( 'vip-social-login_twitter_button_text', esc_html_x( 'Log in with Twitter', 'Login Button', 'vip-social-login') );
@@ -92,7 +92,7 @@ class Providers {
 		}
 
 		// echo '<a href="' . esc_url( $login_url ) . '" class="' . ( $uid ? 'vsl-connected' : 'vsl-provider' ) . '" data-provider="' . esc_attr( $provider ) . '">' . esc_html( $button_text ) . '</a>';
-		echo '<button class="' . ( $uid ? 'vsl-connected' : 'vsl-provider' ) . '" data-provider="' . esc_attr( $provider ) . '">' . esc_html( $button_text ) . '</button>';
+		echo '<a href="' . esc_url( $login_url ) . '" class="' . ( $uid ? 'vsl-connected' : 'vsl-provider' ) . '" data-provider="' . esc_attr( $provider ) . '">' . esc_html( $button_text ) . '</a>';
 	}
 
 	/**

@@ -1,21 +1,18 @@
-var gulp = require('gulp');
-var	uglify = require('gulp-uglify-es').default;
-var	$ = require('gulp-load-plugins')();
+const gulp = require('gulp');
+const named = require('vinyl-named');
+const	$ = require('gulp-load-plugins')();
+const webpack = require('webpack-stream');
 
-var paths = {
+const paths = {
 	src: {
 		php: '../**/*.php',
-		admin: {
-			js: './assets/js/admin/*.js',
-			css: './assets/css/admin/*.scss'
+		js: {
+			admin: './assets/js/admin.js',
+			public: './assets/js/public.js'
 		},
-		login: {
-			js: './assets/js/login/*.js',
-			css: './assets/css/login/*.scss'
-		},
-		public: {
-			js: './assets/js/public/*.js',
-			css: './assets/css/public/*.scss'
+		css: {
+			admin: './assets/css/admin.scss',
+			public: './assets/css/public.scss'
 		}
 	},
 	dest: {
@@ -38,80 +35,37 @@ gulp.task('pot', function() {
 		.pipe( gulp.dest( paths.dest.pot + 'vip-social-login.pot' ) );
 });
 
-gulp.task('admin-css', function() {
-	return gulp.src( paths.src.admin.css )
+gulp.task('css', function() {
+	return gulp.src( [paths.src.css.admin, paths.src.css.public] )
 		.pipe( $.sass( {
 			outputStyle: 'compressed'
 		} ) )
 		.on('error', errorLog)
 		.pipe( $.autoprefixer( 'last 4 versions' ) )
-		.pipe( $.rename( 'admin.css' ) )
 		.pipe( gulp.dest( paths.dest.css ) )
 		.pipe( $.livereload() )
 		.pipe( $.notify( {
-			message: 'Admin SASS style task complete'
+			message: 'SASS style task complete'
 		} ) );
 });
 
-gulp.task('public-css', function() {
-	return gulp.src( paths.src.public.css )
-		.pipe( $.sass( {
-			outputStyle: 'compressed'
-		} ) )
-		.on('error', errorLog)
-		.pipe( $.autoprefixer( 'last 4 versions' ) )
-		.pipe( $.rename( 'public.css' ) )
-		.pipe( gulp.dest( paths.dest.css ) )
-		.pipe( $.livereload() )
-		.pipe( $.notify( {
-			message: 'Admin SASS style task complete'
-		} ) );
-});
-
-gulp.task('admin-js', function() {
-	return gulp.src( paths.src.admin.js )
-		.pipe( $.concat( 'admin.js' ) )
-		.pipe( uglify() )
+gulp.task('js', function() {
+	return gulp.src( [paths.src.js.admin, paths.src.js.public] )
+		.pipe(named())
+		.pipe(webpack( require('./webpack.config.js') ))
 		.on('error', errorLog)
 		.pipe( gulp.dest( paths.dest.js ) )
 		.pipe($.livereload())
 		.pipe( $.notify( {
-			message: 'Admin JS script task complete'
-		} ) );
-});
-
-gulp.task('login-js', function() {
-	return gulp.src( paths.src.login.js )
-		.pipe( $.concat( 'login.js' ) )
-		.pipe( uglify() )
-		.on('error', errorLog)
-		.pipe( gulp.dest( paths.dest.js ) )
-		.pipe($.livereload())
-		.pipe( $.notify( {
-			message: 'Login JS script task complete'
-		} ) );
-});
-
-gulp.task('public-js', function() {
-	return gulp.src( paths.src.public.js )
-		.pipe( $.concat( 'public.js' ) )
-		.pipe( uglify() )
-		.on('error', errorLog)
-		.pipe( gulp.dest( paths.dest.js ) )
-		.pipe($.livereload())
-		.pipe( $.notify( {
-			message: 'Public JS script task complete'
+			message: 'JS script task complete'
 		} ) );
 });
 
 gulp.task('watch', function(){
 	$.livereload.listen();
-	gulp.watch( paths.src.php, $.livereload.reload);
-	gulp.watch( paths.src.admin.css, ['admin-css']);
-	gulp.watch( paths.src.public.css, ['public-css']);
-	gulp.watch( paths.src.admin.js, ['admin-js']);
-	gulp.watch( paths.src.login.js, ['login-js']);
-	gulp.watch( paths.src.public.js, ['public-js']);
+	gulp.watch( paths.src.php, ['pot', $.livereload.reload] );
+	gulp.watch( [paths.src.css.admin, paths.src.css.public], ['css'] );
+	gulp.watch( [paths.src.js.admin, paths.src.js.public], ['js'] );
 });
 
-gulp.task('default', ['admin-css', 'public-css', 'admin-js', 'login-js', 'public-js', 'pot', 'watch']);
+gulp.task('default', ['pot', 'css', 'js', 'watch']);
