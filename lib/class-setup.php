@@ -16,6 +16,8 @@ class Setup {
 	 * Enqueue css and js files.
 	 */
 	public function enqueue_public() {
+		$app_id = get_option( 'vip-social-login_facebook_app_id', '' );
+		
 		wp_enqueue_script(
 			VIP_SOCIAL_LOGIN_SLUG,
 			VIP_SOCIAL_LOGIN_URL . 'assets/js/public.js',
@@ -29,6 +31,7 @@ class Setup {
 				'admin_ajax'      => admin_url( 'admin-ajax.php' ),
 				'current_user_id' => get_current_user_id(),
 				'nonce'           => wp_create_nonce( 'vsl_action' ),
+				'fb_app_id'       => absint( $app_id ),
 			)
 		);
 	}
