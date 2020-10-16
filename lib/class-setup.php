@@ -180,6 +180,11 @@ class Setup {
 		}
 		update_user_meta( $user_id, "vip_social_login_{$provider}_uid", $uid );
 
+		$sites = get_sites( array( 'fields' => 'ids' ) );
+		foreach ( $sites as $site ) {
+			add_user_to_blog( $site, $user_id, 'subscriber' );
+		}
+
 		wp_set_current_user( $user_id );
 
 		$secure_cookie = is_ssl();
@@ -337,6 +342,8 @@ class Setup {
 				}
 
 				self::login_user( $user->name, $user->email, $user->id, $provider );
+				echo '<script>window.close();window.opener.location.reload();</script>';
+				exit;
 				break;
 		}
 	}

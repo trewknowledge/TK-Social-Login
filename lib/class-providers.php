@@ -9,7 +9,7 @@ class Providers {
 	 * @param  string $provider Name of the provider. E.g. google, facebook.
 	 * @return string           HTML Markup of the button.
 	 */
-	public static function login_button( $provider ) {
+	public static function login_button( $provider, $label = '' ) {
 
 		$providers = get_option( 'vip-social-login-providers', array() );
 
@@ -21,11 +21,15 @@ class Providers {
 			return;
 		}
 
-		$button_text = $provider;
+		$button_text = ucwords( $provider );
 		$uid = get_user_meta( get_current_user_id(), "vip_social_login_{$provider}_uid", true );
 
 		$parameters = array( 'vip_social_login_provider' => $provider );
 		$callback_url = add_query_arg( $parameters, wp_login_url() );
+		$classes = array();
+		$classes[] = ( $uid ? 'vsl-connected' : 'vsl-provider' );
+		$classes[] = $provider;
+		$classes = apply_filters( 'vip_social_login/providers/button_classes', $classes );
 
 		switch ( $provider ) {
 			case 'facebook':
@@ -91,8 +95,11 @@ class Providers {
 				break;
 		}
 
-		// echo '<a href="' . esc_url( $login_url ) . '" class="' . ( $uid ? 'vsl-connected' : 'vsl-provider' ) . '" data-provider="' . esc_attr( $provider ) . '">' . esc_html( $button_text ) . '</a>';
-		echo '<a href="' . esc_url( $login_url ) . '" class="' . ( $uid ? 'vsl-connected' : 'vsl-provider' ) . '" data-provider="' . esc_attr( $provider ) . '">' . esc_html( $button_text ) . '</a>';
+		if ( $label ) {
+			$button_text = $label;
+		}
+
+		echo '<a href="' . esc_url( $login_url ) . '" class="' . esc_attr( implode( ' ', $classes ) ) . '" data-provider="' . esc_attr( $provider ) . '">' . esc_html( $button_text ) . '</a>';
 	}
 
 	/**
