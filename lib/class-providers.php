@@ -1,6 +1,7 @@
 <?php
 
 namespace TK\Social_Login;
+use LinkedIn\Client;
 
 class Providers {
 
@@ -90,6 +91,24 @@ class Providers {
 				if ( ! is_user_logged_in() ) {
 					$button_text = get_option( 'vip-social-login_google_button_text', esc_html_x( 'Log in with Google', 'Login Button', 'vip-social-login') );
 					$button_text = apply_filters( 'vip_social_login/providers/google/button_text', $button_text );
+				}
+
+				break;
+			case 'linkedin':
+
+				$client_id     = get_option( 'vip-social-login_linkedin_client_id', '' );
+				$client_secret = get_option( 'vip-social-login_linkedin_client_secret', '' );
+				$redirect_url  = get_option( 'vip-social-login_linkedin_redirect_url', '' );
+
+				if ( ! $client_id || ! $client_secret ) {
+					return;
+				}
+
+				$login_url = 'https://www.linkedin.com/oauth/v2/authorization?response_type=code&client_id=' . $client_id . '&redirect_uri=' . esc_url( $redirect_url ) . '&state=fooobar&scope=r_liteprofile%20r_emailaddress%20w_member_social';//new Hybridauth\Provider\LinkedIn( $config );
+
+				if ( ! is_user_logged_in() ) {
+					$button_text = get_option( 'vip-social-login_linkedin_button_text', esc_html_x( 'Log in with Google', 'Login Button', 'vip-social-login') );
+					$button_text = apply_filters( 'vip_social_login/providers/linkedin/button_text', $button_text );
 				}
 
 				break;
