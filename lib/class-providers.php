@@ -2,9 +2,6 @@
 
 namespace TK\Social_Login;
 
-include_once("LinkedIn/http.php");
-include_once("LinkedIn/oauth_client.php");
-
 class Providers {
 
 	/**
