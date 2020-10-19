@@ -1,4 +1,4 @@
-<h2>Facebook</h2>
+<h2>LinkedIn</h2>
 
 <nav class="provider-tab-navigation">
 	<ul>
