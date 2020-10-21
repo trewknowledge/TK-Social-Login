@@ -16,8 +16,9 @@ class Setup {
 	 * Enqueue css and js files.
 	 */
 	public function enqueue_public() {
-		$app_id = get_option( 'vip-social-login_facebook_app_id', '' );
-		
+		$app_id          = get_option( 'vip-social-login_facebook_app_id', '' );
+		$linkedin_app_id = get_option( 'vip-social-login_linkedin_client_id', '' );
+
 		wp_enqueue_script(
 			VIP_SOCIAL_LOGIN_SLUG,
 			VIP_SOCIAL_LOGIN_URL . 'assets/js/public.js',
@@ -32,6 +33,7 @@ class Setup {
 				'current_user_id' => get_current_user_id(),
 				'nonce'           => wp_create_nonce( 'vsl_action' ),
 				'fb_app_id'       => absint( $app_id ),
+				'lnk_id'          => absint( $linkedin_app_id ),
 			)
 		);
 	}
@@ -75,6 +77,7 @@ class Setup {
 
 		$providers = get_option( 'vip-social-login-providers', array() );
 		$provider  = sanitize_text_field( wp_unslash( $_POST['provider'] ) );
+
 		if ( ! in_array( $provider, array_keys( $providers ), true ) ) {
 			$redirect_url = self::get_error_url( 100002 );
 			wp_send_json_error( array( 'redirect' => $redirect_url ) );
@@ -178,11 +181,15 @@ class Setup {
 				$user_id = self::create_user_from_provider( $name, $email ?: '', $provider );
 			}
 		}
+
 		update_user_meta( $user_id, "vip_social_login_{$provider}_uid", $uid );
 
-		$sites = get_sites( array( 'fields' => 'ids' ) );
-		foreach ( $sites as $site ) {
-			add_user_to_blog( $site, $user_id, 'subscriber' );
+		if ( function_exists( 'get_sites' ) && class_exists( 'WP_Site_Query' ) ) {
+			$sites = get_sites( array( 'fields' => 'ids' ) );
+			echo "<pre>"; var_dump( $sites ); echo "</pre>"; die();
+			foreach ( $sites as $site ) {
+				add_user_to_blog( $site, $user_id, 'subscriber' );
+			}
 		}
 
 		wp_set_current_user( $user_id );
@@ -342,6 +349,60 @@ class Setup {
 				}
 
 				self::login_user( $user->name, $user->email, $user->id, $provider );
+				echo '<script>window.close();window.opener.location.reload();</script>';
+				exit;
+				break;
+			case 'linkedin':
+				$parameters = array( 'vip_social_login_provider' => 'linkedin' );
+				$callback_url = add_query_arg( $parameters, wp_login_url() );
+
+				$client_id     = get_option( 'vip-social-login_linkedin_client_id', '' );
+				$client_secret = get_option( 'vip-social-login_linkedin_client_secret', '' );
+				$redirect_url  = get_option( 'vip-social-login_linkedin_redirect_url', '' );
+				$scopes        = get_option( 'vip-social-login_linkedin_scopes', '' );
+
+				if ( ! $client_id || ! $client_secret || ! isset( $_GET['code'] ) ) {
+					return;
+				}
+				// Access token
+				$params = array(
+									'grant_type' => 'authorization_code',
+									'client_id' => $client_id,
+									'client_secret' => $client_secret,
+									'code' => $_GET['code'],
+									'redirect_uri' => $callback_url,
+								);
+
+				// Access Token request
+				$access_token_url = 'https://www.linkedin.com/uas/oauth2/accessToken?' . http_build_query($params);
+				// Tell streams to make a POST request
+				$context = stream_context_create(
+										array('http' => array('method' => 'POST', 'header'=> 'Content-Length: 0' ) )
+									);
+
+				// Retrieve access token information
+				$response = file_get_contents($access_token_url, false, $context);
+
+				// Native PHP object, please
+				$token = json_decode($response);
+
+				$access_token = $token->access_token;
+
+				// Fetch user data
+				$params = array(
+										'oauth2_access_token' => $access_token,
+										'format' => 'json',
+									);
+				$fetch_url = 'https://api.linkedin.com/v2/me?projection=(id,firstName,lastName,profilePicture(displayImage~:playableStreams))'; //'https://api.linkedin.com/v1/people/~:(id,firstName,lastName)?' . http_build_query($params);
+				// Tell streams to make a (GET, POST, PUT, or DELETE) request
+				$context = stream_context_create(
+										array('http' => array( 'method' => 'GET', 'header' => 'Content-Type: application/json' )	)
+									);
+				// Hocus Pocus
+				$fetch_response = file_get_contents($fetch_url, false, $context);
+				$user_data = json_decode($fetch_response, true);
+				echo "<pre>"; var_dump( $user_data ); echo "</pre>"; die();
+				//self::login_user( $user_data->firstName . ' ' . $user_data->lastName, $user->email, $user->id, $provider );
 				echo '<script>window.close();window.opener.location.reload();</script>';
 				exit;
 				break;

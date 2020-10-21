@@ -11,7 +11,8 @@
 	<li><?php echo esc_html_x( 'Check "Legal Agreement" checkbox', 'Admin(LinkedIn) - Getting started', 'vip-social-login' ); ?></li>
 	<li><?php echo esc_html_x( 'Click on "Create App" button', 'vip-social-login' ); ?></li>
 	<li><?php echo esc_html_x( 'Click on "Auth" tab', 'Admin(LinkedIn) - Getting started', 'vip-social-login' ); ?></li>
-	<li><?php echo esc_html_x( 'Copy "Client ID", "Client Secret" & "Redirct URL". These will be needed in plugin\'s settings', 'Admin(LinkedIn) - Getting started', 'vip-social-login' ); ?></li>
+	<li><?php echo esc_html_x( 'Copy "Client ID", "Client Secret". These will be needed in plugin\'s settings', 'Admin(LinkedIn) - Getting started', 'vip-social-login' ); ?></li>
+	<li><?php echo sprintf( esc_html_x( 'Add the following URL to the "Authorised redirect URIs" field: %1$s', 'Admin(LinkedIn) - Getting started', 'vip-social-login' ), '<strong>' . esc_url( wp_login_url() . '?vip_social_login_provider=linkedin' ) . '</strong>' ); ?></li>
 	<li><?php echo esc_html_x( 'Go to "Products" tab of your APP page & select "Sign In with LinkedIn" product.', 'Admin(LinkedIn) - Getting started', 'vip-social-login' ); ?></li>
 	<li><?php echo esc_html_x( 'Once your product approved go to "Auth" tab & copy permission(s) from "OAuth 2.0 scopes" section. Add scope(s) as comma seperated to plugin settings.', 'Admin(LinkedIn) - Getting started', 'vip-social-login' ); ?></li>
 </ol>

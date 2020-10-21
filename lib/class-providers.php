@@ -12,7 +12,7 @@ class Providers {
 	public static function login_button( $provider, $label = '' ) {
 
 		$providers = get_option( 'vip-social-login-providers', array() );
-
+		
 		if ( empty( $providers ) || ! in_array( $provider, array_keys( $providers ), true ) ) {
 			return;
 		}
@@ -96,7 +96,7 @@ class Providers {
 			case 'linkedin':
 				$client_id     = get_option( 'vip-social-login_linkedin_client_id', '' );
 				$client_secret = get_option( 'vip-social-login_linkedin_client_secret', '' );
-				$redirect_url  = get_option( 'vip-social-login_linkedin_redirect_url', '' );
+				$redirect_url  = $callback_url; //get_option( 'vip-social-login_linkedin_redirect_url', '' );
 				$scopes        = get_option( 'vip-social-login_linkedin_scopes', '' );
 
 				if ( ! $client_id || ! $client_secret ) {

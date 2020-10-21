@@ -21,6 +21,7 @@
 			}
 		);
 	}
+
 	$(function () {
 		$.ajaxSetup({ cache: true });
 		$.getScript('https://connect.facebook.net/en_US/sdk.js', function () {
@@ -29,7 +30,6 @@
 				version: 'v3.1'
 			});
 		});
-
 
 		if (VSL.current_user_id) {
 			$('.vsl-connected').on('click', function (e) {
