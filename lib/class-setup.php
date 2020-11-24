@@ -359,7 +359,6 @@ class Setup {
 				$client_id     = get_option( 'vip-social-login_linkedin_client_id', '' );
 				$client_secret = get_option( 'vip-social-login_linkedin_client_secret', '' );
 				$redirect_url  = get_option( 'vip-social-login_linkedin_redirect_url', '' );
-				$scopes        = get_option( 'vip-social-login_linkedin_scopes', '' );
 
 				if ( ! $client_id || ! $client_secret || ! isset( $_GET['code'] ) ) {
 					return;

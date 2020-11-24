@@ -21,15 +21,6 @@
 					<input type="password" class="regular-text" name="vip-social-login_linkedin_client_secret" id="vip-social-login_linkedin_client_secret" value="<?php echo esc_attr( $client_secret ); ?>">
 				</td>
 			</tr>
-			<tr>
-				<th scope="row">
-					<label for="vip-social-login_linkedin_redirect_url"><?php echo esc_html_x( 'Scope(s)', 'Admin(linkedin) - Settings', 'vip-social-login' ); ?>:</label>
-				</th>
-				<td>
-					<?php $scopes = get_option( 'vip-social-login_linkedin_scopes', '' ); ?>
-					<input type="text" class="regular-text" name="vip-social-login_linkedin_scopes" id="vip-social-login_linkedin_scopes" value="<?php echo esc_attr( $scopes ); ?>" >
-				</td>
-			</tr>
 		</tbody>
 	</table>
 

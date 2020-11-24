@@ -40,7 +40,7 @@ msgctxt "Login Button"
 msgid "Log in with Google"
 msgstr ""
 
-#: ../lib/class-providers.php:109
+#: ../lib/class-providers.php:108
 msgctxt "Login Button"
 msgid "Log in with LinkedIn"
 msgstr ""
@@ -387,7 +387,7 @@ msgstr ""
 
 #: ../views/settings/providers/linkedin/getting-started.php:17
 msgctxt "Admin(LinkedIn) - Getting started"
-msgid "Once your product approved go to \"Auth\" tab & copy permission(s) from \"OAuth 2.0 scopes\" section. Add scope(s) as comma seperated to plugin settings."
+msgid "Once your product approved go to \"Auth\" tab & make sure your app have both 'r_liteprofile' & 'r_emailaddress' scopes."
 msgstr ""
 
 #: ../views/settings/providers/linkedin/getting-started.php:20
@@ -403,11 +403,6 @@ msgstr ""
 #: ../views/settings/providers/linkedin/settings.php:17
 msgctxt "Admin(linkedin) - Settings"
 msgid "Client Secret"
-msgstr ""
-
-#: ../views/settings/providers/linkedin/settings.php:26
-msgctxt "Admin(linkedin) - Settings"
-msgid "Scope(s)"
 msgstr ""
 
 #: ../views/settings/providers/twitter/getting-started.php:1
