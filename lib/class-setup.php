@@ -389,21 +389,31 @@ class Setup {
 				$access_token = $token->access_token;
 
 				// Fetch user data
-				$params = array(
-										'oauth2_access_token' => $access_token,
-										'format' => 'json',
-									);
-				$fetch_url = 'https://api.linkedin.com/v2/me?projection=(id,firstName,lastName,profilePicture(displayImage~:playableStreams))'; //'https://api.linkedin.com/v1/people/~:(id,firstName,lastName)?' . http_build_query($params);
-				// Tell streams to make a (GET, POST, PUT, or DELETE) request
-				$context = stream_context_create(
-										array('http' => array( 'method' => 'GET', 'header' => 'Content-Type: application/json' )	)
-									);
-				// Hocus Pocus
-				$fetch_response = file_get_contents($fetch_url, false, $context);
-				$user_data = json_decode($fetch_response, true);
-				echo "<pre>"; var_dump( $user_data ); echo "</pre>"; die();
-				//self::login_user( $user_data->firstName . ' ' . $user_data->lastName, $user->email, $user->id, $provider );
-				echo '<script>window.close();window.opener.location.reload();</script>';
+				$args = array(
+						'method'  => 'GET',
+						'headers' => array(
+							'Authorization' => 'Bearer ' . $access_token,
+							'Content-Type' => 'application/json',
+						)
+					);
+				$fetch_user_data_url  = 'https://api.linkedin.com/v2/me';
+				$fetch_user_email_url = 'https://api.linkedin.com/v2/emailAddress?q=members&projection=(elements*(handle~))';
+
+				$user_data_response 		 = wp_remote_post( $fetch_user_data_url, $args );
+				$user_data_response_body = json_decode( wp_remote_retrieve_body( $user_data_response ) );
+
+				$user_email_response 		  = wp_remote_post( $fetch_user_email_url, $args );
+				$user_email_response_body = json_decode( wp_remote_retrieve_body( $user_email_response ) );
+
+				if ( ! $user_data_response->isError && ! $user_email_response->isError ) {
+					$user_firstname = $user_data_response_body->localizedFirstName;
+					$user_lastname  = $user_data_response_body->localizedLastName;
+
+					$user_email_element = $user_email_response_body->elements[0];
+					$user_email = $user_email_element->{'handle~'}->emailAddress;
+					self::login_user( $user_firstname . ' ' . $user_lastname, $user_email, $user_data_response_body->id, $provider );
+					echo '<script>window.close();window.opener.location.reload();</script>';
+				}
 				exit;
 				break;
 		}

@@ -103,7 +103,7 @@ class Providers {
 					return;
 				}
 
-				$login_url = 'https://www.linkedin.com/oauth/v2/authorization?response_type=code&client_id=' . $client_id . '&redirect_uri=' . esc_url( $redirect_url ) . '&scope='. $scopes;//new Hybridauth\Provider\LinkedIn( $config );
+				$login_url = 'https://www.linkedin.com/oauth/v2/authorization?response_type=code&client_id=' . $client_id . '&redirect_uri=' . esc_url( $redirect_url ) . '&scope=r_liteprofile%20r_emailaddress';//new Hybridauth\Provider\LinkedIn( $config );
 
 				if ( ! is_user_logged_in() ) {
 					$button_text = get_option( 'vip-social-login_linkedin_button_text', esc_html_x( 'Log in with LinkedIn', 'Login Button', 'vip-social-login') );

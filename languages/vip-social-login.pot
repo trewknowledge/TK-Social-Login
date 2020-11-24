@@ -1,4 +1,4 @@
-# Copyright (C) 2018 vip-social-login
+# Copyright (C) 2020 vip-social-login
 # This file is distributed under the same license as the vip-social-login package.
 msgid ""
 msgstr ""
@@ -25,19 +25,24 @@ msgstr ""
 msgid "You appear to be running a development version of this plugin. You must run composer install from the plugin dev directory."
 msgstr ""
 
-#: ../lib/class-providers.php:50
+#: ../lib/class-providers.php:54
 msgctxt "Login Button"
 msgid "Log in with Facebook"
 msgstr ""
 
-#: ../lib/class-providers.php:71
+#: ../lib/class-providers.php:75
 msgctxt "Login Button"
 msgid "Log in with Twitter"
 msgstr ""
 
-#: ../lib/class-providers.php:87
+#: ../lib/class-providers.php:91
 msgctxt "Login Button"
 msgid "Log in with Google"
+msgstr ""
+
+#: ../lib/class-providers.php:109
+msgctxt "Login Button"
+msgid "Log in with LinkedIn"
 msgstr ""
 
 #: ../lib/class-setup-admin.php:23
@@ -49,15 +54,15 @@ msgctxt "Admin loading indicator"
 msgid "Settings Updated"
 msgstr ""
 
-#: ../lib/class-setup.php:51
+#: ../lib/class-setup.php:56
 msgid "This network is already connected to another user."
 msgstr ""
 
-#: ../lib/class-setup.php:54
+#: ../lib/class-setup.php:59
 msgid "The network provider is not acceptable."
 msgstr ""
 
-#: ../lib/class-setup.php:57
+#: ../lib/class-setup.php:62
 msgid "The network provider is currently disabled."
 msgstr ""
 
@@ -85,17 +90,17 @@ msgstr ""
 msgid "Providers"
 msgstr ""
 
-#: ../views/settings/providers.php:9, ../views/settings/providers.php:20, ../views/settings/providers.php:31
+#: ../views/settings/providers.php:9, ../views/settings/providers.php:20, ../views/settings/providers.php:31, ../views/settings/providers.php:42
 msgctxt "Toggle On/Off Status"
 msgid "OFF"
 msgstr ""
 
-#: ../views/settings/providers.php:10, ../views/settings/providers.php:21, ../views/settings/providers.php:32
+#: ../views/settings/providers.php:10, ../views/settings/providers.php:21, ../views/settings/providers.php:32, ../views/settings/providers.php:43
 msgctxt "Toggle On/Off Status"
 msgid "ON"
 msgstr ""
 
-#: ../views/settings/providers.php:44
+#: ../views/settings/providers.php:55
 msgctxt "Admin updating indicator"
 msgid "Updating..."
 msgstr ""
@@ -205,12 +210,12 @@ msgctxt "Admin(Facebook) - Getting started"
 msgid "I am done setting up my Facebook App"
 msgstr ""
 
-#: ../views/settings/providers/facebook/header.php:5, ../views/settings/providers/facebook/header.php:5, ../views/settings/providers/google/header.php:5, ../views/settings/providers/google/header.php:5, ../views/settings/providers/twitter/header.php:5, ../views/settings/providers/twitter/header.php:5
+#: ../views/settings/providers/facebook/header.php:5, ../views/settings/providers/facebook/header.php:5, ../views/settings/providers/google/header.php:5, ../views/settings/providers/google/header.php:5, ../views/settings/providers/linkedin/header.php:5, ../views/settings/providers/linkedin/header.php:5, ../views/settings/providers/twitter/header.php:5, ../views/settings/providers/twitter/header.php:5
 msgctxt "Admin - provider tab navigation"
 msgid "Getting Started"
 msgstr ""
 
-#: ../views/settings/providers/facebook/header.php:6, ../views/settings/providers/facebook/header.php:6, ../views/settings/providers/google/header.php:6, ../views/settings/providers/google/header.php:6, ../views/settings/providers/twitter/header.php:6, ../views/settings/providers/twitter/header.php:6
+#: ../views/settings/providers/facebook/header.php:6, ../views/settings/providers/facebook/header.php:6, ../views/settings/providers/google/header.php:6, ../views/settings/providers/google/header.php:6, ../views/settings/providers/linkedin/header.php:6, ../views/settings/providers/linkedin/header.php:6, ../views/settings/providers/twitter/header.php:6, ../views/settings/providers/twitter/header.php:6
 msgctxt "Admin - provider tab navigation"
 msgid "Settings"
 msgstr ""
@@ -313,6 +318,96 @@ msgstr ""
 #: ../views/settings/providers/google/settings.php:17
 msgctxt "Admin(Google) - Settings"
 msgid "Client Secret"
+msgstr ""
+
+#: ../views/settings/providers/linkedin/getting-started.php:1
+msgctxt "Admin(LinkedIn) - Getting started"
+msgid "To allow your visitors to log in with their LinkedIn account, first you must create a LinkedIn App. The following guide will help you through the LinkedIn App creation process. After you have created your LinkedIn App, head over to \"Settings\" and configure the given \"App ID\" and \"App secret\" according to your LinkedIn App."
+msgstr ""
+
+#: ../views/settings/providers/linkedin/getting-started.php:3
+msgctxt "Admin(LinkedIn) - Getting started"
+msgid "Create LinkedIn App"
+msgstr ""
+
+#: ../views/settings/providers/linkedin/getting-started.php:6
+msgctxt "Admin(LinkedIn) - Getting started"
+msgid "Navigate to %1$s"
+msgstr ""
+
+#: ../views/settings/providers/linkedin/getting-started.php:7
+msgctxt "Admin(LinkedIn) - Getting started"
+msgid "Log in with your LinkedIn credentials if you are not logged in"
+msgstr ""
+
+#: ../views/settings/providers/linkedin/getting-started.php:8
+msgctxt "Admin(LinkedIn) - Getting started"
+msgid "Click on the \"Create App\" blue button"
+msgstr ""
+
+#: ../views/settings/providers/linkedin/getting-started.php:9
+msgctxt "Admin(LinkedIn) - Getting started"
+msgid "Fill \"App Name\" and \"LinkedIn Page\""
+msgstr ""
+
+#: ../views/settings/providers/linkedin/getting-started.php:10
+msgctxt "Admin(LinkedIn) - Getting started"
+msgid "Upload an logo for your App"
+msgstr ""
+
+#: ../views/settings/providers/linkedin/getting-started.php:11
+msgctxt "Admin(LinkedIn) - Getting started"
+msgid "Check \"Legal Agreement\" checkbox"
+msgstr ""
+
+#: ../views/settings/providers/linkedin/getting-started.php:12
+msgctxt "vip-social-login"
+msgid "Click on \"Create App\" button"
+msgstr ""
+
+#: ../views/settings/providers/linkedin/getting-started.php:13
+msgctxt "Admin(LinkedIn) - Getting started"
+msgid "Click on \"Auth\" tab"
+msgstr ""
+
+#: ../views/settings/providers/linkedin/getting-started.php:14
+msgctxt "Admin(LinkedIn) - Getting started"
+msgid "Copy \"Client ID\", \"Client Secret\". These will be needed in plugin's settings"
+msgstr ""
+
+#: ../views/settings/providers/linkedin/getting-started.php:15
+msgctxt "Admin(LinkedIn) - Getting started"
+msgid "Add the following URL to the \"Authorised redirect URIs\" field: %1$s"
+msgstr ""
+
+#: ../views/settings/providers/linkedin/getting-started.php:16
+msgctxt "Admin(LinkedIn) - Getting started"
+msgid "Go to \"Products\" tab of your APP page & select \"Sign In with LinkedIn\" product."
+msgstr ""
+
+#: ../views/settings/providers/linkedin/getting-started.php:17
+msgctxt "Admin(LinkedIn) - Getting started"
+msgid "Once your product approved go to \"Auth\" tab & copy permission(s) from \"OAuth 2.0 scopes\" section. Add scope(s) as comma seperated to plugin settings."
+msgstr ""
+
+#: ../views/settings/providers/linkedin/getting-started.php:20
+msgctxt "Admin(LinkedIn) - Getting started"
+msgid "I am done setting up my LinkedIn App"
+msgstr ""
+
+#: ../views/settings/providers/linkedin/settings.php:8
+msgctxt "Admin(linkedin) - Settings"
+msgid "Client ID"
+msgstr ""
+
+#: ../views/settings/providers/linkedin/settings.php:17
+msgctxt "Admin(linkedin) - Settings"
+msgid "Client Secret"
+msgstr ""
+
+#: ../views/settings/providers/linkedin/settings.php:26
+msgctxt "Admin(linkedin) - Settings"
+msgid "Scope(s)"
 msgstr ""
 
 #: ../views/settings/providers/twitter/getting-started.php:1
