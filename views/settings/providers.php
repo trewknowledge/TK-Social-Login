@@ -36,6 +36,17 @@
 			</label>
 		</div>
 	</div>
+	<div class="vip-social-login-provider">
+		<a href="<?php echo esc_url( admin_url( 'options-general.php?page=vip-social-login&view=providers&subview=linkedin&tab=getting-started' ) ); ?>" class="cog"><span class="dashicons dashicons-admin-generic"></span></a>
+		<div class="vip-social-login-toggle">
+			<div class="vip-social-login-toggle-option-off vip-social-login-toggle-option"><?php echo esc_html_x( 'OFF', 'Toggle On/Off Status', 'vip-social-login' ); ?></div>
+			<div class="vip-social-login-toggle-option-on vip-social-login-toggle-option"><?php echo esc_html_x( 'ON', 'Toggle On/Off Status', 'vip-social-login' ); ?></div>
+			<input <?php checked( ( isset( $providers['linkedin'] ) && $providers['linkedin'] ? true : false ), true ); ?> type="checkbox" data-nonce="<?php echo esc_attr( wp_create_nonce( 'vip-social-login-update-providers' ) ); ?>" data-provider="linkedin" name="vip-social-login-provider[linkedin]" id="vip-social-login-toggle-provider-linkedin">
+			<label class="vip-social-login-toggle-current-status" for="vip-social-login-toggle-provider-linkedin">
+				<span class="vip-social-login-provider-linkedin"><img src="<?php echo esc_url( VIP_SOCIAL_LOGIN_URL ) . 'assets/img/linkedin.png'; ?>" alt=""></span>
+			</label>
+		</div>
+	</div>
 </div>
 
 <script type="text/html" id="tmpl-updating">

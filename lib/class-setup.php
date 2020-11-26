@@ -16,6 +16,9 @@ class Setup {
 	 * Enqueue css and js files.
 	 */
 	public function enqueue_public() {
+		$app_id          = get_option( 'vip-social-login_facebook_app_id', '' );
+		$linkedin_app_id = get_option( 'vip-social-login_linkedin_client_id', '' );
+
 		wp_enqueue_script(
 			VIP_SOCIAL_LOGIN_SLUG,
 			VIP_SOCIAL_LOGIN_URL . 'assets/js/public.js',
@@ -29,6 +32,8 @@ class Setup {
 				'admin_ajax'      => admin_url( 'admin-ajax.php' ),
 				'current_user_id' => get_current_user_id(),
 				'nonce'           => wp_create_nonce( 'vsl_action' ),
+				'fb_app_id'       => absint( $app_id ),
+				'lnk_id'          => absint( $linkedin_app_id ),
 			)
 		);
 	}
@@ -72,6 +77,7 @@ class Setup {
 
 		$providers = get_option( 'vip-social-login-providers', array() );
 		$provider  = sanitize_text_field( wp_unslash( $_POST['provider'] ) );
+
 		if ( ! in_array( $provider, array_keys( $providers ), true ) ) {
 			$redirect_url = self::get_error_url( 100002 );
 			wp_send_json_error( array( 'redirect' => $redirect_url ) );
@@ -175,7 +181,15 @@ class Setup {
 				$user_id = self::create_user_from_provider( $name, $email ?: '', $provider );
 			}
 		}
+
 		update_user_meta( $user_id, "vip_social_login_{$provider}_uid", $uid );
+
+		if ( function_exists( 'get_sites' ) && class_exists( 'WP_Site_Query' ) ) {
+			$sites = get_sites( array( 'fields' => 'ids' ) );
+			foreach ( $sites as $site ) {
+				add_user_to_blog( $site, $user_id, 'subscriber' );
+			}
+		}
 
 		wp_set_current_user( $user_id );
 
@@ -334,6 +348,71 @@ class Setup {
 				}
 
 				self::login_user( $user->name, $user->email, $user->id, $provider );
+				echo '<script>window.close();window.opener.location.reload();</script>';
+				exit;
+				break;
+			case 'linkedin':
+				$parameters = array( 'vip_social_login_provider' => 'linkedin' );
+				$callback_url = add_query_arg( $parameters, wp_login_url() );
+
+				$client_id     = get_option( 'vip-social-login_linkedin_client_id', '' );
+				$client_secret = get_option( 'vip-social-login_linkedin_client_secret', '' );
+				$redirect_url  = get_option( 'vip-social-login_linkedin_redirect_url', '' );
+
+				if ( ! $client_id || ! $client_secret || ! isset( $_GET['code'] ) ) {
+					return;
+				}
+				// Access token
+				$params = array(
+									'grant_type' => 'authorization_code',
+									'client_id' => $client_id,
+									'client_secret' => $client_secret,
+									'code' => $_GET['code'],
+									'redirect_uri' => $callback_url,
+								);
+
+				// Access Token request
+				$access_token_url = 'https://www.linkedin.com/uas/oauth2/accessToken?' . http_build_query($params);
+				// Tell streams to make a POST request
+				$context = stream_context_create(
+										array('http' => array('method' => 'POST', 'header'=> 'Content-Length: 0' ) )
+									);
+
+				// Retrieve access token information
+				$response = file_get_contents($access_token_url, false, $context);
+
+				// Native PHP object, please
+				$token = json_decode($response);
+
+				$access_token = $token->access_token;
+
+				// Fetch user data
+				$args = array(
+						'method'  => 'GET',
+						'headers' => array(
+							'Authorization' => 'Bearer ' . $access_token,
+							'Content-Type' => 'application/json',
+						)
+					);
+				$fetch_user_data_url  = 'https://api.linkedin.com/v2/me';
+				$fetch_user_email_url = 'https://api.linkedin.com/v2/emailAddress?q=members&projection=(elements*(handle~))';
+
+				$user_data_response 		 = wp_remote_post( $fetch_user_data_url, $args );
+				$user_data_response_body = json_decode( wp_remote_retrieve_body( $user_data_response ) );
+
+				$user_email_response 		  = wp_remote_post( $fetch_user_email_url, $args );
+				$user_email_response_body = json_decode( wp_remote_retrieve_body( $user_email_response ) );
+
+				if ( ! $user_data_response->isError && ! $user_email_response->isError ) {
+					$user_firstname = $user_data_response_body->localizedFirstName;
+					$user_lastname  = $user_data_response_body->localizedLastName;
+
+					$user_email_element = $user_email_response_body->elements[0];
+					$user_email = $user_email_element->{'handle~'}->emailAddress;
+					self::login_user( $user_firstname . ' ' . $user_lastname, $user_email, $user_data_response_body->id, $provider );
+					echo '<script>window.close();window.opener.location.reload();</script>';
+				}
+				exit;
 				break;
 		}
 	}
