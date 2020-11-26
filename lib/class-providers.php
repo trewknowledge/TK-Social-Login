@@ -12,12 +12,12 @@ class Providers {
 	public static function login_button( $provider, $label = '' ) {
 
 		$providers = get_option( 'vip-social-login-providers', array() );
-		
+
 		if ( empty( $providers ) || ! in_array( $provider, array_keys( $providers ), true ) ) {
 			return;
 		}
 
-		if ( 'false' === $providers[ $provider ] ) {
+		if ( ! $providers[ $provider ] ) {
 			return;
 		}
 

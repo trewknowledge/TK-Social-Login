@@ -44,10 +44,10 @@ class Settings_Page {
 		if ( ! current_user_can( 'manage_options' ) || ! isset( $_POST['provider'], $_POST['checked'] ) ) {
 			wp_send_json_error();
 		}
-
+		$provider_checked = ( ( $_POST['checked'] ) === 'false' ) ? false : true;
 		$providers = get_option( 'vip-social-login-providers', array() );
 
-		$providers[ sanitize_text_field( wp_unslash( $_POST['provider'] ) ) ] = boolval( $_POST['checked'] );
+		$providers[ sanitize_text_field( wp_unslash( $_POST['provider'] ) ) ] = $provider_checked;
 
 		update_option( 'vip-social-login-providers', $providers );
 
