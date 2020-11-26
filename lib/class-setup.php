@@ -186,7 +186,6 @@ class Setup {
 
 		if ( function_exists( 'get_sites' ) && class_exists( 'WP_Site_Query' ) ) {
 			$sites = get_sites( array( 'fields' => 'ids' ) );
-			echo "<pre>"; var_dump( $sites ); echo "</pre>"; die();
 			foreach ( $sites as $site ) {
 				add_user_to_blog( $site, $user_id, 'subscriber' );
 			}
