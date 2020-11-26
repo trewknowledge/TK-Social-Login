@@ -1,17 +1,32 @@
 {
-  "name": "tk-social-login",
+  "name": "webpack-test",
   "version": "1.0.0",
   "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "webpack --mode production",
+    "watch": "webpack --watch --mode development"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
   "devDependencies": {
+    "@babel/core": "^7.1.2",
+    "@babel/preset-env": "^7.1.0",
+    "babel-loader": "^8.0.4",
     "gulp": "^3.9.1",
-    "gulp-autoprefixer": "^5.0.0",
-    "gulp-concat": "^2.6.1",
-    "gulp-livereload": "^3.8.1",
-    "gulp-load-plugins": "^1.1.0",
-    "gulp-notify": "^3.0.0",
-    "gulp-rename": "^1.2.3",
-    "gulp-sass": "^2.1.0",
-    "gulp-uglify-es": "^1.0.4",
-    "gulp-wp-pot": "^2.3.1"
+    "gulp-autoprefixer": "^6.0.0",
+    "gulp-livereload": "^4.0.0",
+    "gulp-load-plugins": "^1.5.0",
+    "gulp-notify": "^3.2.0",
+    "gulp-sass": "^4.0.1",
+    "gulp-wp-pot": "^2.3.2",
+    "vinyl-named": "^1.1.0",
+    "webpack": "^4.20.2",
+    "webpack-cli": "^3.1.2",
+    "webpack-stream": "^5.1.1"
+  },
+  "dependencies": {
+    "oauth": "^0.9.15"
   }
 }

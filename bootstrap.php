@@ -7,6 +7,9 @@ add_action(
 	'plugins_loaded', function () {
 
 		load_plugin_textdomain( 'vip-social-login', false, basename( dirname( __FILE__ ) ) . '/languages/' );
+		add_action( 'wp_ajax_vsl_connect_network', array( '\TK\Social_Login\Setup', 'connect_network' ) );
+		add_action( 'wp_ajax_nopriv_vsl_connect_network', array( '\TK\Social_Login\Setup', 'connect_network' ) );
+
 		add_action( 'wp_ajax_vsl_disconnect_network', array( '\TK\Social_Login\Setup', 'disconnect_network' ) );
 
 		if ( is_admin() ) {

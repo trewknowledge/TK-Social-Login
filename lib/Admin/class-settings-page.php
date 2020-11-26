@@ -19,9 +19,15 @@ class Settings_Page {
 
 		register_setting( 'vip-social-login-twitter', 'vip-social-login_twitter_consumer_key', array( 'sanitize_callback' => 'sanitize_text_field') );
 		register_setting( 'vip-social-login-twitter', 'vip-social-login_twitter_consumer_secret', array( 'sanitize_callback' => 'sanitize_text_field') );
+		register_setting( 'vip-social-login-twitter', 'vip-social-login_twitter_access_token', array( 'sanitize_callback' => 'sanitize_text_field') );
+		register_setting( 'vip-social-login-twitter', 'vip-social-login_twitter_access_token_secret', array( 'sanitize_callback' => 'sanitize_text_field') );
 
 		register_setting( 'vip-social-login-google', 'vip-social-login_google_client_id', array( 'sanitize_callback' => 'sanitize_text_field') );
 		register_setting( 'vip-social-login-google', 'vip-social-login_google_client_secret', array( 'sanitize_callback' => 'sanitize_text_field') );
+
+		register_setting( 'vip-social-login-linkedin', 'vip-social-login_linkedin_client_id', array( 'sanitize_callback' => 'sanitize_text_field') );
+		register_setting( 'vip-social-login-linkedin', 'vip-social-login_linkedin_client_secret', array( 'sanitize_callback' => 'sanitize_text_field') );
+		register_setting( 'vip-social-login-linkedin', 'vip-social-login_linkedin_redirect_url', array( 'sanitize_callback' => 'sanitize_text_field') );
 
 		add_action( 'wp_ajax_vip-social-login-update-providers', array( $this, 'update_active_providers' ) );
 	}
